@@ -1,8 +1,10 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "./Navbar";
 import SideDrawer from "./SideDrawer";
-import Feedback from "../ui/feedback";
+import Feedback from "../ui/Feedback";
+import FeedbackContext from "../../store/feedbackContext";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,15 +19,26 @@ const useStyles = makeStyles((theme) => ({
 
 const Layout = (props) => {
   const classes = useStyles();
+  const router = useRouter();
+  const feedbackCtx = useContext(FeedbackContext);
+  const activeFeedback = feedbackCtx.feedback;
+
+  const isIndexPage = router.pathname === "/" ? true : false;
 
   return (
     <Fragment>
-      <div className={classes.root}>
-        <Navbar />
-        <SideDrawer />
-        <main className={classes.content}>{props.children}</main>
-      </div>
-      <Feedback />
+      {!isIndexPage && (
+        <Fragment>
+          <div className={classes.root}>
+            <Navbar />
+            <SideDrawer />
+            <main className={classes.content}>{props.children}</main>
+          </div>
+          {activeFeedback && <Feedback message={activeFeedback.message} />}
+        </Fragment>
+      )}
+
+      {isIndexPage && <Fragment>{props.children}</Fragment>}
     </Fragment>
   );
 };

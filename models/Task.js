@@ -5,10 +5,11 @@ const TaskSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide a title for this task."],
   },
-  date: {
+  dueDate: {
     type: String,
-    required: [true, "Please provide the date for this task"],
+    required: [true, "Please provide the due date for this task"],
   },
+  completed: { type: Boolean, default: false },
 });
 
-export default mongoose.model("Task", TaskSchema);
+export default mongoose.models.Task || mongoose.model("Task", TaskSchema);

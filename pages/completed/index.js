@@ -4,6 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import Task from "../../components/tasks/Task";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import { Box } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -11,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TodoPage() {
+export default function CompletedPage() {
   const classes = useStyles();
 
   return (
@@ -21,17 +22,14 @@ function TodoPage() {
         justifyContent="space-between"
         className={classes.container}
       >
-        <Grid item>
-          <Typography variant="h5">In progress</Typography>
-        </Grid>
-        <Grid item>
-          <AddButton text="new task" />
-        </Grid>
+        <Box mb={0.5}>
+          <Grid item>
+            <Typography variant="h5">Completed</Typography>
+          </Grid>
+        </Box>
       </Grid>
       <Task title="This is some text 1" label="Personal" date="Due 28 Nov" />
       <Task title="This is some text 2" label="Work" date="Due 12 Dec" />
     </Fragment>
   );
 }
-
-export default TodoPage;

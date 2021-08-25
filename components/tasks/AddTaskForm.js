@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -13,6 +13,7 @@ import ChipsArray from "./ChipsArray";
 import Box from "@material-ui/core/Box";
 import { IconButton } from "@material-ui/core";
 import axios from "axios";
+import FeedbackContext from "../../store/feedbackContext";
 
 const useStyles = makeStyles((theme) => ({
   formDialogTitle: {
@@ -36,6 +37,7 @@ export default function AddTaskForm(props) {
   const classes = useStyles();
   const titleInputRef = useRef();
   const dateInputRef = useRef();
+  const feedbackCtx = useContext(FeedbackContext);
 
   async function submitTaskHandler() {
     const title = titleInputRef.current.value;
@@ -47,6 +49,12 @@ export default function AddTaskForm(props) {
         date,
       });
 
+      props.closeHandler();
+
+      feedbackCtx.showFeedback({
+        message: "New task added",
+      });
+
       console.log(response.data);
     } catch (error) {
       console.log(error);
@@ -56,7 +64,7 @@ export default function AddTaskForm(props) {
   return (
     <Dialog
       open={props.isOpened}
-      onClose={props.handleClose}
+      onClose={props.closeHandler}
       aria-labelledby="form-dialog-title"
       TransitionComponent={Transition}
       fullWidth

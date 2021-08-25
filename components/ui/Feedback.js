@@ -1,36 +1,32 @@
-import React from "react";
+import React, { useContext } from "react";
 import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
+import FeedbackContext from "../../store/feedbackContext";
 
 export default function Feedback(props) {
   const [open, setOpen] = React.useState(true);
-
-  const handleClick = () => {
-    setOpen(true);
-  };
+  const feedbackCtx = useContext(FeedbackContext);
 
   const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
+    if (reason === "clickaway") return;
 
     setOpen(false);
+    feedbackCtx.hideFeedback();
   };
 
   return (
     <div>
-      <Button onClick={handleClick}>Open simple snackbar</Button>
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "left",
+          horizontal: "center",
         }}
         open={open}
-        autoHideDuration={6000}
+        autoHideDuration={3000}
         onClose={handleClose}
-        message="Note archived"
+        message={props.message}
         action={
           <React.Fragment>
             <Button color="secondary" size="small" onClick={handleClose}>

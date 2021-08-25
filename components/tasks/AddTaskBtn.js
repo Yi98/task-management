@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
-import TodoForm from "./AddTaskForm";
+import AddTaskForm from "./AddTaskForm";
 
 const AddButton = (props) => {
   const [isOpened, setOpen] = React.useState(false);
@@ -25,7 +25,7 @@ const AddButton = (props) => {
       >
         {props.text}
       </Button>
-      <TodoForm isOpened={isOpened} closeHandler={handleClose} />
+      <AddTaskForm isOpened={isOpened} closeHandler={handleClose} />
     </Fragment>
   );
 };

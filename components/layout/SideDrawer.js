@@ -15,17 +15,21 @@ import { Avatar, Box, Divider, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SettingsIcon from "@material-ui/icons/Settings";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import AddCategoryForm from "../tasks/AddCategoryForm";
+import AddCategoryForm from "../categories/AddCategoryForm";
 
 const drawerWidth = "17%";
+const drawerMinWidth = "250px";
+
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
+    minWidth: drawerMinWidth,
     flexShrink: 0,
   },
   drawerPaper: {
     width: drawerWidth,
+    minWidth: drawerMinWidth,
     borderRight: 0,
   },
   drawerContainer: {
@@ -37,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     width: theme.spacing(3),
     height: theme.spacing(3),
-    fontSize: theme.spacing(2),
+    fontSize: theme.spacing(1.5),
     marginRight: theme.spacing(1.5),
     color: theme.palette.getContrastText(theme.palette.primary.main),
     backgroundColor: theme.palette.primary.main,
@@ -62,8 +66,8 @@ export default function SideDrawer() {
   const menus = [
     {
       id: 1,
-      title: "My Tasks",
-      redirectLink: "/",
+      title: "Dashboard",
+      redirectLink: "/dashboard",
       icon: <DashboardIcon />,
       selected: true,
     },

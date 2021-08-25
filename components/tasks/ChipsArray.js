@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Chip from "@material-ui/core/Chip";
 import AddIcon from "@material-ui/icons/Add";
 import { Box, IconButton } from "@material-ui/core";
-import AddCategoryForm from "./AddCategoryForm";
+import AddCategoryForm from "../categories/AddCategoryForm";
 
 const useStyles = makeStyles((theme) => ({
   root: {

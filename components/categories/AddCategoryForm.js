@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useRef, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Popper from "@material-ui/core/Popper";
 import Fade from "@material-ui/core/Fade";
 import Paper from "@material-ui/core/Paper";
 import CloseIcon from "@material-ui/icons/Close";
 import { Button, Grid, IconButton, TextField } from "@material-ui/core";
+import axios from "axios";
+import FeedbackContext from "../../store/feedbackContext";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -24,6 +26,21 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AddCategoryForm(props) {
   const classes = useStyles();
+  const nameInputRef = useRef();
+  const feedbackCtx = useContext(FeedbackContext);
+
+  const submitCategoryHandler = async function () {
+    const name = nameInputRef.current.value;
+
+    try {
+      const response = await axios.post("/api/categories", { name });
+
+      props.closeHandler();
+      feedbackCtx.showFeedback({ message: "New category added." });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Popper
@@ -53,6 +70,7 @@ export default function AddCategoryForm(props) {
             </Grid>
 
             <TextField
+              inputRef={nameInputRef}
               autoFocus
               id="name"
               required
@@ -61,6 +79,7 @@ export default function AddCategoryForm(props) {
               fullWidth
             />
             <Button
+              onClick={submitCategoryHandler}
               className={classes.button}
               variant="contained"
               size="small"

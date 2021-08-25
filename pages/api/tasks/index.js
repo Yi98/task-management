@@ -1,4 +1,4 @@
-import dbConnect from "../../../utils/dbConnect";
+import dbConnect from "../../../lib/dbConnect";
 import Task from "../../../models/Task";
 
 export default async function handler(req, res) {
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     case "POST":
       try {
         const { title, date } = req.body;
-        const newTask = new Task({ title, date });
+        const newTask = new Task({ title, dueDate: date });
         const addedTask = await newTask.save();
 
         res.status(201).json({ success: true, data: addedTask });

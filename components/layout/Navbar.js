@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
+import Link from "next/link";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -36,11 +37,13 @@ export default function Navbar() {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" className={classes.title}>
-          Tasky
-        </Typography>
+        <Link href="/" passHref={true}>
+          <Typography variant="h6" className={classes.title}>
+            Tasky
+          </Typography>
+        </Link>
         <Button color="inherit">Welcome back, Ng</Button>
       </Toolbar>
     </AppBar>
   );
-};
+}
