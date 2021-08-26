@@ -20,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "4.5rem",
     paddingBottom: "5%",
     paddingLeft: "10%",
-
     textAlign: "center",
   },
   closeModalIcon: {

@@ -34,11 +34,11 @@ const Layout = (props) => {
             <SideDrawer />
             <main className={classes.content}>{props.children}</main>
           </div>
-          {activeFeedback && <Feedback message={activeFeedback.message} />}
         </Fragment>
       )}
-
       {isIndexPage && <Fragment>{props.children}</Fragment>}
+      
+      {activeFeedback && <Feedback message={activeFeedback.message} />}
     </Fragment>
   );
 };

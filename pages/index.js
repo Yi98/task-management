@@ -1,7 +1,8 @@
-import { Grid, Typography } from "@material-ui/core";
-import { Fragment } from "react";
+import { Grid } from "@material-ui/core";
+import { Fragment, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import SignupForm from "../components/auth/SignupForm";
+import LoginForm from "../components/auth/LoginForm";
 import Image from "next/image";
 import profilePic from "../public/illustration.svg";
 
@@ -43,6 +44,10 @@ const useStyles = makeStyles((theme) => ({
 export default function MainPage() {
   const classes = useStyles();
 
+  const [page, setPage] = useState("signup");
+
+  const redirectHandler = (pageTitle) => setPage(pageTitle);
+  
   return (
     <Fragment>
       <Grid container className={classes.mainContainer}>
@@ -61,7 +66,12 @@ export default function MainPage() {
         </Grid>
         <Grid item xs={6}>
           <div className={classes.formContainer}>
-            <SignupForm />
+            {page === "signup" && (
+              <SignupForm redirectHandler={redirectHandler} />
+            )}
+            {page === "login" && (
+              <LoginForm redirectHandler={redirectHandler} />
+            )}
           </div>
         </Grid>
       </Grid>

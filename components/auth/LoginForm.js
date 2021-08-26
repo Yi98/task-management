@@ -1,8 +1,7 @@
-import { useRef, useContext } from "react";
+import { useRef } from "react";
 import { Button, TextField, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import axios from "axios";
-import FeedbackContext from "../../store/feedbackContext";
+import { signIn } from "next-auth/client";
 
 const useStyles = makeStyles((theme) => ({
   formTitle: {
@@ -27,41 +26,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignupForm(props) {
+export default function LoginForm(props) {
   const classes = useStyles();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
-  const feedbackCtx = useContext(FeedbackContext);
 
-  const signupHandler = async () => {
+  const loginHandler = async () => {
     const email = emailInputRef.current.value;
     const password = passwordInputRef.current.value;
 
-    try {
-      const response = await axios.post("/api/auth/signup", {
-        email,
-        password,
-      });
+    console.log(email, password);
 
-      if (response.data.success) {
-        feedbackCtx.showFeedback({
-          message: "Sign up successfully.",
-        });
-        props.redirectHandler("login");
-      } else {
-        feedbackCtx.showFeedback({
-          message: "Failed to sign up.",
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    const results = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+
+    console.log(results);
   };
 
   return (
     <div>
       <Typography variant="h4" className={classes.formTitle}>
-        Get&apos;s Started
+        Log In
       </Typography>
       <Typography variant="body1" className={classes.description}>
         Start organizing you task today!
@@ -103,20 +91,20 @@ export default function SignupForm(props) {
             disableElevation
             className={classes.formButton}
             fullWidth
-            onClick={signupHandler}
+            onClick={loginHandler}
           >
-            Sign Up
+            Log In
           </Button>
         </div>
       </form>
 
       <Typography variant="subtitle1">
-        Already have an account?{" "}
+        Don&apos;t have an account?{" "}
         <span
           className={classes.specialText}
-          onClick={props.redirectHandler.bind(null, "login")}
+          onClick={props.redirectHandler.bind(null, "signup")}
         >
-          <strong>Log In</strong>
+          <strong>Sign Up</strong>
         </span>
       </Typography>
     </div>
