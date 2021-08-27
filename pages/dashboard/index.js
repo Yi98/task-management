@@ -1,6 +1,7 @@
-import { Box, Grid, Typography } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import { Fragment } from "react";
 import InfoCard from "../../components/dashboards/InfoCard";
+import { isAuthenticated } from "../../lib/auth";
 
 export default function Dashboard(props) {
   return (
@@ -15,4 +16,9 @@ export default function Dashboard(props) {
       </Grid>
     </Fragment>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await isAuthenticated(context.req);
+  return { props: { session } };
 }

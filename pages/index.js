@@ -1,10 +1,11 @@
 import { Grid } from "@material-ui/core";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import SignupForm from "../components/auth/SignupForm";
 import LoginForm from "../components/auth/LoginForm";
 import Image from "next/image";
 import profilePic from "../public/illustration.svg";
+import { allowViewPage } from "../lib/auth";
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -44,10 +45,10 @@ const useStyles = makeStyles((theme) => ({
 export default function MainPage() {
   const classes = useStyles();
 
-  const [page, setPage] = useState("signup");
+  const [page, setPage] = useState("login");
 
   const redirectHandler = (pageTitle) => setPage(pageTitle);
-  
+
   return (
     <Fragment>
       <Grid container className={classes.mainContainer}>
@@ -77,4 +78,8 @@ export default function MainPage() {
       </Grid>
     </Fragment>
   );
+}
+
+export async function getServerSideProps(context) {
+  return await allowViewPage(context.req);
 }

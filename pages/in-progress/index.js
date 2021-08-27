@@ -1,9 +1,13 @@
-import React, { Fragment } from "react";
-import AddButton from "../../components/tasks/AddTaskBtn";
+import React, { Fragment, useState, useEffect } from "react";
+import AddTaskButton from "../../components/tasks/AddTaskBtn";
 import Grid from "@material-ui/core/Grid";
-import Task from "../../components/tasks/Task";
+import TaskRow from "../../components/tasks/TaskRow";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import { isAuthenticated } from "../../lib/auth";
+import dbConnect from "../../lib/dbConnect";
+import Task from "../../models/Task";
+import Category from "../../models/Category";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -11,9 +15,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TodoPage() {
+export default function TodoPage(props) {
   const classes = useStyles();
 
+  const [tasks, setTasks] = useState([]);
+  const [categories, setCategories] = useState(props.categories);
+
+  useEffect(() => {
+    setTasks(props.tasks);
+  }, [props.tasks]);
+
+  function updateTasksHandler(newTask) {
+    setTasks((prevState) => [...prevState, newTask]);
+  }
+  
   return (
     <Fragment>
       <Grid
@@ -25,13 +40,32 @@ function TodoPage() {
           <Typography variant="h5">In progress</Typography>
         </Grid>
         <Grid item>
-          <AddButton text="new task" />
+          <AddTaskButton
+            text="new task"
+            updateTasks={updateTasksHandler}
+            categories={categories}
+          />
         </Grid>
       </Grid>
-      <Task title="This is some text 1" label="Personal" date="Due 28 Nov" />
-      <Task title="This is some text 2" label="Work" date="Due 12 Dec" />
+      {tasks.map((task) => (
+        <TaskRow
+          key={task._id}
+          title={task.title}
+          category={task.category}
+          dueDate={task.dueDate}
+        />
+      ))}
     </Fragment>
   );
 }
 
-export default TodoPage;
+export async function getServerSideProps(context) {
+  await dbConnect();
+  const session = await isAuthenticated(context.req);
+  const tasks = JSON.parse(
+    JSON.stringify(await Task.find({ completed: false }))
+  );
+  const categories = JSON.parse(JSON.stringify(await Category.find({})));
+
+  return { props: { session, tasks, categories } };
+}

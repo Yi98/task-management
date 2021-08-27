@@ -9,7 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
-import ChipsArray from "./ChipsArray";
+import CategoryChips from "./CategoryChips";
 import Box from "@material-ui/core/Box";
 import { IconButton } from "@material-ui/core";
 import axios from "axios";
@@ -43,18 +43,11 @@ export default function AddTaskForm(props) {
     const date = dateInputRef.current.value;
 
     try {
-      const response = await axios.post("/api/tasks", {
-        title,
-        date,
-      });
+      const response = await axios.post("/api/tasks", { title, date });
+      props.updateTasks(response.data.task);
 
+      feedbackCtx.showFeedback({ message: "New task added." });
       props.closeHandler();
-
-      feedbackCtx.showFeedback({
-        message: "New task added",
-      });
-
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -108,7 +101,7 @@ export default function AddTaskForm(props) {
           />
         </Box>
         <Box mb={3}>
-          <ChipsArray />
+          <CategoryChips categories={props.categories} />
         </Box>
       </DialogContent>
       <Box px={1.5} pb={1.5}>

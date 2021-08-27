@@ -1,7 +1,9 @@
-import { useRef } from "react";
+import { useRef, useContext } from "react";
 import { Button, TextField, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { signIn } from "next-auth/client";
+import { useRouter } from "next/router";
+import FeedbackContext from "../../store/feedbackContext";
 
 const useStyles = makeStyles((theme) => ({
   formTitle: {
@@ -28,14 +30,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function LoginForm(props) {
   const classes = useStyles();
+  const router = useRouter();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
+  const feedbackCtx = useContext(FeedbackContext);
 
   const loginHandler = async () => {
     const email = emailInputRef.current.value;
     const password = passwordInputRef.current.value;
-
-    console.log(email, password);
 
     const results = await signIn("credentials", {
       redirect: false,
@@ -43,7 +45,14 @@ export default function LoginForm(props) {
       password,
     });
 
-    console.log(results);
+    if (!results.error) {
+      router.replace("/dashboard");
+      return;
+    }
+    
+    feedbackCtx.showFeedback({
+      message: results.error,
+    });
   };
 
   return (

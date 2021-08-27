@@ -10,6 +10,10 @@ const TaskSchema = new mongoose.Schema({
     required: [true, "Please provide the due date for this task"],
   },
   completed: { type: Boolean, default: false },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+  },
 });
 
 export default mongoose.models.Task || mongoose.model("Task", TaskSchema);

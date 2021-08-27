@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     case "GET":
       try {
         const tasks = await Task.find({});
-        res.status(200).json({ success: true, data: tasks });
+        res.status(200).json({ success: true, tasks: tasks });
       } catch (error) {
         res.status(400).json({ success: false });
       }
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         const newTask = new Task({ title, dueDate: date });
         const addedTask = await newTask.save();
 
-        res.status(201).json({ success: true, data: addedTask });
+        res.status(201).json({ success: true, task: addedTask });
       } catch (error) {
         res.status(400).json({ success: false });
       }

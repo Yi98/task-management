@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexWrap: "wrap",
     "& > *": {
-      marginTop: theme.spacing(0.5),
+      marginTop: theme.spacing(0.3),
       width: "100%",
       borderLeft: `5px solid ${theme.palette.primary.main}`,
       padding: "1% 0 1% 10px",
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Task(props) {
+export default function TaskRow(props) {
   const classes = useStyles();
 
   const [checked, setChecked] = React.useState(true);
@@ -34,16 +34,21 @@ export default function Task(props) {
 
   return (
     <div className={classes.root}>
-      <Paper elevation={2}>
+      <Paper elevation={1}>
         <Grid container className={classes.topContainer}>
           <Grid item xs={6}>
             <Typography variant="subtitle1">{props.title}</Typography>
           </Grid>
           <Grid item xs={3} className={classes.topContainer}>
-            <Chip label={props.label} clickable color="primary" size="small" />
+            <Chip
+              label={props.category}
+              clickable
+              color="primary"
+              size="small"
+            />
           </Grid>
           <Grid item xs={2}>
-            <Typography variant="subtitle1">{props.date}</Typography>
+            <Typography variant="subtitle1">{props.dueDate}</Typography>
           </Grid>
           <Grid item xs={1} className={classes.checkbox}>
             <Checkbox

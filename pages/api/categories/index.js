@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     case "GET":
       try {
         const categories = await Category.find({});
-        res.status(200).json({ success: true, data: categories });
+        res.status(200).json({ success: true, categories: categories });
       } catch (error) {
         res.status(400).json({ success: false });
       }
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         const newCategory = new Category({ name });
         const addedCategory = await newCategory.save();
 
-        res.status(201).json({ success: true, data: addedCategory });
+        res.status(201).json({ success: true, category: addedCategory });
       } catch (error) {
         res.status(400).json({ success: false });
       }

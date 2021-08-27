@@ -1,10 +1,10 @@
 import React, { Fragment } from "react";
-import AddButton from "../../components/tasks/AddTaskBtn";
 import Grid from "@material-ui/core/Grid";
-import Task from "../../components/tasks/Task";
+import TaskRow from "../../components/tasks/TaskRow";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
+import { isAuthenticated } from "../../lib/auth";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -28,8 +28,13 @@ export default function CompletedPage() {
           </Grid>
         </Box>
       </Grid>
-      <Task title="This is some text 1" label="Personal" date="Due 28 Nov" />
-      <Task title="This is some text 2" label="Work" date="Due 12 Dec" />
+      <TaskRow title="This is some text 1" label="Personal" date="Due 28 Nov" />
+      <TaskRow title="This is some text 2" label="Work" date="Due 12 Dec" />
     </Fragment>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await isAuthenticated(context.req);
+  return { props: { session } };
 }

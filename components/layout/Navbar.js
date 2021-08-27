@@ -6,10 +6,10 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import Link from "next/link";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { signOut } from "next-auth/client";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -36,7 +36,7 @@ export default function Navbar() {
 
   const logoutHandler = () => {
     signOut();
-  }
+  };
 
   return (
     <AppBar
@@ -54,16 +54,15 @@ export default function Navbar() {
         >
           <MenuIcon />
         </IconButton>
-        <Link href="/" passHref={true}>
-          <Typography variant="h6" className={classes.title}>
-            Tasky
-          </Typography>
-        </Link>
+        <Typography variant="h6" className={classes.title}>
+          Tasky
+        </Typography>
         <Button
           color="inherit"
           aria-controls="simple-menu"
           aria-haspopup="true"
           onClick={handleClick}
+          endIcon={<ArrowDropDownIcon />}
         >
           Welcome back, Ng
         </Button>
@@ -73,6 +72,9 @@ export default function Navbar() {
           keepMounted
           open={Boolean(anchorEl)}
           onClose={handleClose}
+          getContentAnchorEl={null}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "right" }}
         >
           <MenuItem onClick={logoutHandler}>Logout</MenuItem>
         </Menu>

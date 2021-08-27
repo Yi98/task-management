@@ -34,9 +34,10 @@ export default function AddCategoryForm(props) {
 
     try {
       const response = await axios.post("/api/categories", { name });
-
-      props.closeHandler();
+      props.updateCategories(response.data.category);
+      
       feedbackCtx.showFeedback({ message: "New category added." });
+      props.closeHandler();
     } catch (error) {
       console.log(error);
     }

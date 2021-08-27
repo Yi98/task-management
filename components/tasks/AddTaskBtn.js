@@ -1,10 +1,10 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import AddTaskForm from "./AddTaskForm";
 
-const AddButton = (props) => {
-  const [isOpened, setOpen] = React.useState(false);
+const AddTaskButton = (props) => {
+  const [isOpened, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -25,9 +25,14 @@ const AddButton = (props) => {
       >
         {props.text}
       </Button>
-      <AddTaskForm isOpened={isOpened} closeHandler={handleClose} />
+      <AddTaskForm
+        isOpened={isOpened}
+        closeHandler={handleClose}
+        updateTasks={props.updateTasks}
+        categories={props.categories}
+      />
     </Fragment>
   );
 };
 
-export default AddButton;
+export default AddTaskButton;

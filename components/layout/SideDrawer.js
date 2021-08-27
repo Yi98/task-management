@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -13,13 +13,11 @@ import FormatListBulletedIcon from "@material-ui/icons/FormatListBulleted";
 import TimerIcon from "@material-ui/icons/Timer";
 import { Avatar, Box, Divider, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import SettingsIcon from "@material-ui/icons/Settings";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AddCategoryForm from "../categories/AddCategoryForm";
+import useSWR from "swr";
 
 const drawerWidth = "17%";
 const drawerMinWidth = "250px";
-
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -59,9 +57,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SideDrawer() {
+export default function SideDrawer(props) {
   const classes = useStyles();
   const router = useRouter();
+
+  const [categories, setCategories] = useState([
+    {
+      id: 0,
+      name: "All",
+    },
+  ]);
+
+  const fetcher = (...args) => fetch(...args).then((res) => res.json());
+  const { data, error } = useSWR("/api/categories", fetcher);
+
+  useEffect(() => {
+    if (data) {
+      setCategories((prevState) => [...prevState, ...data.categories]);
+    }
+  }, [data]);
 
   const menus = [
     {
@@ -85,24 +99,6 @@ export default function SideDrawer() {
     },
   ];
 
-  const categories = [
-    {
-      id: 1,
-      title: "All",
-      icon: <SettingsIcon />,
-    },
-    {
-      id: 2,
-      title: "Personal",
-      icon: <ExitToAppIcon />,
-    },
-    {
-      id: 3,
-      title: "Work",
-      icon: <ExitToAppIcon />,
-    },
-  ];
-
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [open, setOpen] = React.useState(false);
 
@@ -113,6 +109,10 @@ export default function SideDrawer() {
 
   function closeHandler(event) {
     setOpen(false);
+  }
+
+  function updateCategoriesHandler(newCategory) {
+    setCategories((prevState) => [...prevState, newCategory]);
   }
 
   return (
@@ -149,17 +149,18 @@ export default function SideDrawer() {
         </Typography>
         <List>
           {categories.map((category, index) => (
-            <ListItem button key={category.title}>
+            <ListItem button key={category.name}>
               <Box pl={1}>
                 <Avatar className={classes.avatar}>1</Avatar>
               </Box>
-              <ListItemText primary={category.title} />
+              <ListItemText primary={category.name} />
             </ListItem>
           ))}
           <AddCategoryForm
             open={open}
             anchorEl={anchorEl}
             closeHandler={closeHandler}
+            updateCategories={updateCategoriesHandler}
           />
 
           <ListItem button key="add" onClick={openHandler}>
