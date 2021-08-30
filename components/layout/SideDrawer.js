@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -10,11 +10,13 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Link from "next/link";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import FormatListBulletedIcon from "@material-ui/icons/FormatListBulleted";
-import TimerIcon from "@material-ui/icons/Timer";
 import { Avatar, Box, Divider, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import AddCategoryForm from "../categories/AddCategoryForm";
+import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import useSWR from "swr";
+import { initializeFetcher } from "../../lib/swr";
+import CategoryContext from "../../store/category-context";
 
 const drawerWidth = "17%";
 const drawerMinWidth = "250px";
@@ -40,40 +42,52 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(3),
     height: theme.spacing(3),
     fontSize: theme.spacing(1.5),
-    marginRight: theme.spacing(1.5),
     color: theme.palette.getContrastText(theme.palette.primary.main),
     backgroundColor: theme.palette.primary.main,
+    fontWeight: "bold",
   },
   addCategoryAvatar: {
     color: theme.palette.getContrastText("#EEE"),
     backgroundColor: "#EEE",
+    marginLeft: theme.spacing(0.5),
+    marginRight: theme.spacing(2),
+    width: theme.spacing(3),
+    height: theme.spacing(3),
   },
   catergoryTitle: {
     paddingLeft: theme.spacing(2.5),
+    fontSize: "1rem",
   },
   activeMenu: {
     backgroundColor: theme.palette.background.dark,
     borderRight: `4px solid ${theme.palette.primary.main}`,
+  },
+  categoryName: {
+    paddingLeft: theme.spacing(1),
+  },
+  categoryMenu: {
+    height: "65%",
+    overflowY: "auto",
   },
 }));
 
 export default function SideDrawer(props) {
   const classes = useStyles();
   const router = useRouter();
+  const categoryCtx = useContext(CategoryContext);
 
-  const [categories, setCategories] = useState([
-    {
-      id: 0,
-      name: "All",
-    },
-  ]);
-
-  const fetcher = (...args) => fetch(...args).then((res) => res.json());
-  const { data, error } = useSWR("/api/categories", fetcher);
+  const fetcher = initializeFetcher();
+  const { data, error } = useSWR(
+    `/api/categories?pathname=${router.pathname}`,
+    fetcher
+  );
 
   useEffect(() => {
     if (data) {
-      setCategories((prevState) => [...prevState, ...data.categories]);
+      categoryCtx.dispatchCategory({
+        type: "INPUT",
+        val: data.categories,
+      });
     }
   }, [data]);
 
@@ -95,7 +109,7 @@ export default function SideDrawer(props) {
       id: 3,
       title: "Completed",
       redirectLink: "/completed",
-      icon: <TimerIcon />,
+      icon: <CheckCircleOutlineIcon />,
     },
   ];
 
@@ -111,8 +125,15 @@ export default function SideDrawer(props) {
     setOpen(false);
   }
 
-  function updateCategoriesHandler(newCategory) {
-    setCategories((prevState) => [...prevState, newCategory]);
+  function selectCategoryHandler(id) {
+    let pathname = router.pathname;
+
+    if (pathname != "/in-progress" || pathname != "completed") {
+      pathname = "/in-progress";
+    }
+
+    const url = id ? `${pathname}?category=${id}` : `${pathname}`;
+    router.replace(url);
   }
 
   return (
@@ -147,32 +168,34 @@ export default function SideDrawer(props) {
         <Typography variant="subtitle2" className={classes.catergoryTitle}>
           Categories
         </Typography>
-        <List>
-          {categories.map((category, index) => (
-            <ListItem button key={category.name}>
-              <Box pl={1}>
-                <Avatar className={classes.avatar}>1</Avatar>
-              </Box>
-              <ListItemText primary={category.name} />
+
+        <List className={classes.categoryMenu}>
+          <ListItem button key="add" onClick={openHandler}>
+            <Avatar
+              className={`${classes.avatar} ${classes.addCategoryAvatar}`}
+            >
+              <AddIcon />
+            </Avatar>
+            <ListItemText primary="New Category" />
+          </ListItem>
+          {categoryCtx.categoryState.original.map((category) => (
+            <ListItem
+              button
+              key={category.name}
+              onClick={selectCategoryHandler.bind(null, category._id)}
+            >
+              <ListItemText
+                primary={category.name}
+                className={classes.categoryName}
+              />
+              <Avatar className={classes.avatar}>{category.sum || 0}</Avatar>
             </ListItem>
           ))}
           <AddCategoryForm
             open={open}
             anchorEl={anchorEl}
             closeHandler={closeHandler}
-            updateCategories={updateCategoriesHandler}
           />
-
-          <ListItem button key="add" onClick={openHandler}>
-            <Box pl={1}>
-              <Avatar
-                className={`${classes.avatar} ${classes.addCategoryAvatar}`}
-              >
-                <AddIcon />
-              </Avatar>
-            </Box>
-            <ListItemText primary="New Category" />
-          </ListItem>
         </List>
       </div>
     </Drawer>

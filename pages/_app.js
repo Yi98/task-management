@@ -4,8 +4,9 @@ import theme from "../src/theme";
 import "../styles/globals.css";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { CssBaseline } from "@material-ui/core";
-import { FeedbackContextProvider } from "../store/feedbackContext";
 import { Provider } from "next-auth/client";
+import { CategoryContextProvider } from "../store/category-context";
+import { TaskContextProvider } from "../store/task-context";
 
 export default function MyApp({ Component, pageProps }) {
   React.useEffect(() => {
@@ -21,11 +22,13 @@ export default function MyApp({ Component, pageProps }) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <FeedbackContextProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </FeedbackContextProvider>
+        <CategoryContextProvider>
+          <TaskContextProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </TaskContextProvider>
+        </CategoryContextProvider>
       </ThemeProvider>
     </Provider>
   );

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Chip from "@material-ui/core/Chip";
+import CategoryContext from "../../store/category-context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,32 +23,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CategoryChips(props) {
+export default function CategoryChips() {
   const classes = useStyles();
-  const [activeChip, setActiveChip] = useState(
-    props.categories[0]._id.toString()
-  );
+  const categoryCtx = useContext(CategoryContext);
 
   const handleClick = (categoryId) => {
-    setActiveChip(categoryId.toString());
+    categoryCtx.dispatchCategory({
+      type: "SELECT_ACTIVE",
+      val: categoryId.toString(),
+    });
   };
 
   return (
     <div component="ul" className={classes.root}>
-      {props.categories.map((category) => {
-        return (
-          <li key={category._id}>
-            <Chip
-              key={category._id}
-              label={`${category.name}`}
-              onClick={handleClick.bind(null, category._id)}
-              style={{ backgroundColor: "fff" }}
-              className={`${classes.chip} ${
-                activeChip == category._id.toString() ? classes.active : ""
-              }`}
-            />
-          </li>
-        );
+      {categoryCtx.categoryState.selectable.map((category) => {
+        if (category._id != "all") {
+          return (
+            <li key={category._id}>
+              <Chip
+                key={category._id}
+                label={`${category.name}`}
+                onClick={handleClick.bind(null, category._id)}
+                style={{ backgroundColor: "fff" }}
+                className={`${classes.chip} ${
+                  categoryCtx.categoryState.selected == category._id || null
+                    ? classes.active
+                    : ""
+                }`}
+              />
+            </li>
+          );
+        }
       })}
     </div>
   );

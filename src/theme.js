@@ -15,7 +15,7 @@ let theme = createTheme({
     },
     background: {
       main: "#FFF",
-      dark: "#F7F7F7",
+      dark: "#F4F4F4",
     },
     neutral: {},
   },

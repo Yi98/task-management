@@ -1,10 +1,13 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import TaskRow from "../../components/tasks/TaskRow";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { isAuthenticated } from "../../lib/auth";
+import dbConnect from "../../lib/dbConnect";
+import Task from "../../models/Task";
+import Category from "../../models/Category";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -12,8 +15,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CompletedPage() {
+export default function CompletedPage(props) {
   const classes = useStyles();
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    setTasks(props.tasks);
+  }, [props.tasks]);
 
   return (
     <Fragment>
@@ -28,13 +36,32 @@ export default function CompletedPage() {
           </Grid>
         </Box>
       </Grid>
-      <TaskRow title="This is some text 1" label="Personal" date="Due 28 Nov" />
-      <TaskRow title="This is some text 2" label="Work" date="Due 12 Dec" />
+      {tasks.map((task) => (
+        <TaskRow
+          key={task._id}
+          title={task.title}
+          category={task.category}
+          dueDate={task.dueDate}
+        />
+      ))}
     </Fragment>
   );
 }
 
 export async function getServerSideProps(context) {
+  await dbConnect();
   const session = await isAuthenticated(context.req);
-  return { props: { session } };
+  let condition = { completed: true };
+
+  if (context.query.category) {
+    condition = { ...condition, category: context.query.category };
+  }
+
+  const tasks = JSON.parse(
+    JSON.stringify(await Task.find(condition).populate("category"))
+  );
+
+  const categories = JSON.parse(JSON.stringify(await Category.find({})));
+
+  return { props: { session, tasks, categories } };
 }

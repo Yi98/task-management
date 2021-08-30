@@ -4,7 +4,7 @@ export function FeedbackContextProvider(props) {
   const [activeFeedback, setActiveFeedback] = useState();
 
   function showFeedbackHandler(feedbackData) {
-    setActiveFeedback(feedbackData);
+    setActiveFeedback(feedbackData.message);
   }
 
   function hideFeedbackHandler() {

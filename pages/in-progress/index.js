@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useContext } from "react";
 import AddTaskButton from "../../components/tasks/AddTaskBtn";
 import Grid from "@material-ui/core/Grid";
 import TaskRow from "../../components/tasks/TaskRow";
@@ -17,18 +17,22 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TodoPage(props) {
   const classes = useStyles();
-
   const [tasks, setTasks] = useState([]);
-  const [categories, setCategories] = useState(props.categories);
 
   useEffect(() => {
     setTasks(props.tasks);
   }, [props.tasks]);
 
-  function updateTasksHandler(newTask) {
+  function addTaskHandler(newTask) {
     setTasks((prevState) => [...prevState, newTask]);
   }
-  
+
+  function removeTasksHandler(completedTask) {
+    setTasks((prevState) => {
+      return prevState.filter((task) => task._id !== completedTask._id);
+    });
+  }
+
   return (
     <Fragment>
       <Grid
@@ -42,17 +46,19 @@ export default function TodoPage(props) {
         <Grid item>
           <AddTaskButton
             text="new task"
-            updateTasks={updateTasksHandler}
-            categories={categories}
+            addTask={addTaskHandler}
+            categories={props.categories}
           />
         </Grid>
       </Grid>
       {tasks.map((task) => (
         <TaskRow
           key={task._id}
+          taskId={task._id}
           title={task.title}
           category={task.category}
           dueDate={task.dueDate}
+          removeTask={removeTasksHandler}
         />
       ))}
     </Fragment>
@@ -62,10 +68,22 @@ export default function TodoPage(props) {
 export async function getServerSideProps(context) {
   await dbConnect();
   const session = await isAuthenticated(context.req);
+  let condition = { completed: false };
+
+  if (context.query.category) {
+    condition = { ...condition, category: context.query.category };
+  }
+
   const tasks = JSON.parse(
-    JSON.stringify(await Task.find({ completed: false }))
+    JSON.stringify(await Task.find(condition).populate("category"))
   );
   const categories = JSON.parse(JSON.stringify(await Category.find({})));
 
-  return { props: { session, tasks, categories } };
+  return {
+    props: {
+      session,
+      tasks,
+      categories,
+    },
+  };
 }

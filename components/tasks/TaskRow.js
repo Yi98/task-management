@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import { Chip, Grid, Typography } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
+import axios from "axios";
+import FeedbackContext from "../../store/feedback-context";
+import TaskDetails from "../../components/tasks/TaskDetails";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexWrap: "wrap",
+    cursor: "pointer",
     "& > *": {
       marginTop: theme.spacing(0.3),
       width: "100%",
@@ -21,27 +25,66 @@ const useStyles = makeStyles((theme) => ({
   topContainer: {
     marginTop: theme.spacing(0.5),
   },
+  paperRow: {
+    "&:hover": {
+      backgroundColor: theme.palette.background.dark,
+    },
+  },
 }));
 
 export default function TaskRow(props) {
   const classes = useStyles();
 
-  const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = useState(true);
+  const feedbackCtx = useContext(FeedbackContext);
+  const [selectedTask, setSelectedTask] = useState({});
 
-  const handleChange = (event) => {
+  const checkTaskHandler = async (event) => {
     setChecked(event.target.checked);
+
+    const response = await axios.patch("/api/tasks", {
+      id: event.target.value,
+    });
+
+    if (response.data.success) {
+      props.removeTask(response.data.task);
+    }
+
+    feedbackCtx.showFeedback({ message: response.data.message });
   };
+
+  const selectTaskHandler = (task) => {
+    setSelectedTask(task);
+    console.log(task);
+    openDetailHandler();
+  };
+
+  const [isDetailOpened, setDetailOpened] = useState(false);
+
+  const openDetailHandler = () => {
+    setDetailOpened(true);
+  };
+
+  const closeDetailHandler = () => {
+    setDetailOpened(false);
+  };
+
+  // useEffect(() => {});
 
   return (
     <div className={classes.root}>
-      <Paper elevation={1}>
+      <Paper
+        elevation={1}
+        className={classes.paperRow}
+        onClick={selectTaskHandler.bind(null, props)}
+      >
         <Grid container className={classes.topContainer}>
           <Grid item xs={6}>
             <Typography variant="subtitle1">{props.title}</Typography>
           </Grid>
           <Grid item xs={3} className={classes.topContainer}>
             <Chip
-              label={props.category}
+              label={props.category.name}
               clickable
               color="primary"
               size="small"
@@ -52,13 +95,20 @@ export default function TaskRow(props) {
           </Grid>
           <Grid item xs={1} className={classes.checkbox}>
             <Checkbox
-              onChange={handleChange}
+              value={props.taskId}
+              onChange={checkTaskHandler}
               color="primary"
               inputProps={{ "aria-label": "checkbox" }}
             />
           </Grid>
         </Grid>
       </Paper>
+
+      <TaskDetails
+        isOpened={isDetailOpened}
+        closeHandler={closeDetailHandler}
+        task={selectedTask}
+      />
     </div>
   );
 }

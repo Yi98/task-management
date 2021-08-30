@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "./Navbar";
 import SideDrawer from "./SideDrawer";
 import Feedback from "../ui/Feedback";
-import FeedbackContext from "../../store/feedbackContext";
+import FeedbackContext from "../../store/feedback-context";
 import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({

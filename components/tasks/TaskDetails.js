@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useState, useEffect } from "react";
+import React, { useRef, useContext, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -14,7 +14,7 @@ import Box from "@material-ui/core/Box";
 import { IconButton } from "@material-ui/core";
 import axios from "axios";
 import FeedbackContext from "../../store/feedback-context";
-import CategoryContext from "../../store/category-context";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const useStyles = makeStyles((theme) => ({
   formDialogTitle: {
@@ -33,34 +33,50 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AddTaskForm(props) {
+export default function TaskDetails(props) {
   const classes = useStyles();
   const titleInputRef = useRef();
   const dateInputRef = useRef();
   const feedbackCtx = useContext(FeedbackContext);
-  const categoryCtx = useContext(CategoryContext);
+  const [selectedCategory, setSelectedCategory] = useState();
 
-  async function submitTaskHandler() {
+  async function editTaskHandler() {
     const title = titleInputRef.current.value;
     const dueDate = dateInputRef.current.value;
 
     try {
-      categoryCtx.dispatchCategory({
-        type: "INCREMENT",
-      });
+      // const response = await axios.post("/api/tasks", {
+      //   title,
+      //   dueDate,
+      //   category: selectedCategory,
+      // });
+      // props.addTask(response.data.task);
 
-      const response = await axios.post("/api/tasks", {
-        title,
-        dueDate,
-        category: categoryCtx.categoryState.selected,
-      });
-      props.addTask(response.data.task);
-
-      feedbackCtx.showFeedback({ message: "New task added." });
+      // feedbackCtx.showFeedback({ message: "New task added." });
       props.closeHandler();
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async function deleteTaskHandler(id) {
+    try {
+
+      const response = await axios.delete("/api/tasks", { params: { id } });
+      console.log(response);
+
+      // props.addTask(response.data.task);
+
+      feedbackCtx.showFeedback({ message: "Task deleted." });
+
+      props.closeHandler();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function selectCategoryHandler(categoryId) {
+    setSelectedCategory(categoryId);
   }
 
   return (
@@ -74,7 +90,7 @@ export default function AddTaskForm(props) {
       disableEnforceFocus
     >
       <DialogTitle id="form-dialog-title" className={classes.formDialogTitle}>
-        Add new task
+        Details
         <IconButton
           aria-label="close"
           onClick={props.closeHandler}
@@ -87,7 +103,7 @@ export default function AddTaskForm(props) {
         <Box mb={3}>
           <TextField
             inputRef={titleInputRef}
-            autoFocus
+            value={props.task.title}
             required
             variant="outlined"
             label="Enter task headline"
@@ -98,6 +114,7 @@ export default function AddTaskForm(props) {
         <Box mb={3}>
           <TextField
             inputRef={dateInputRef}
+            value={props.task.dueDate}
             id="date"
             required
             variant="outlined"
@@ -111,19 +128,34 @@ export default function AddTaskForm(props) {
           />
         </Box>
         <Box mb={3}>
-          <CategoryChips />
+          {/* <CategoryChips
+            categories={props.categories}
+            selected={props.category._id}
+            selectCategoryHandler={selectCategoryHandler}
+          /> */}
         </Box>
       </DialogContent>
       <Box px={1.5} pb={1.5}>
         <DialogActions>
           <Button
-            onClick={submitTaskHandler}
+            onClick={deleteTaskHandler.bind(null, props.task.taskId)}
+            className={classes.deleteButton}
+            endIcon={<DeleteIcon />}
+            variant="outlined"
+            disableElevation
+            color="primary"
+          >
+            Delete
+          </Button>
+          <Button
+            onClick={editTaskHandler}
+            disabled
             variant="contained"
-            color="secondary"
             endIcon={<CheckIcon />}
+            color="primary"
             disableElevation
           >
-            Confirm
+            Save changes
           </Button>
         </DialogActions>
       </Box>

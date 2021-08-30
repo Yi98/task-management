@@ -2,7 +2,7 @@ import { useRef, useContext } from "react";
 import { Button, TextField, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
-import FeedbackContext from "../../store/feedbackContext";
+import FeedbackContext from "../../store/feedback-context";
 
 const useStyles = makeStyles((theme) => ({
   formTitle: {

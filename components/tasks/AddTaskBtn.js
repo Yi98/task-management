@@ -28,8 +28,7 @@ const AddTaskButton = (props) => {
       <AddTaskForm
         isOpened={isOpened}
         closeHandler={handleClose}
-        updateTasks={props.updateTasks}
-        categories={props.categories}
+        addTask={props.addTask}
       />
     </Fragment>
   );

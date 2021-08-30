@@ -6,7 +6,8 @@ import Paper from "@material-ui/core/Paper";
 import CloseIcon from "@material-ui/icons/Close";
 import { Button, Grid, IconButton, TextField } from "@material-ui/core";
 import axios from "axios";
-import FeedbackContext from "../../store/feedbackContext";
+import FeedbackContext from "../../store/feedback-context";
+import CategoryContext from "../../store/category-context";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -28,14 +29,19 @@ export default function AddCategoryForm(props) {
   const classes = useStyles();
   const nameInputRef = useRef();
   const feedbackCtx = useContext(FeedbackContext);
+  const categoryCtx = useContext(CategoryContext);
 
   const submitCategoryHandler = async function () {
     const name = nameInputRef.current.value;
 
     try {
       const response = await axios.post("/api/categories", { name });
-      props.updateCategories(response.data.category);
-      
+
+      categoryCtx.dispatchCategory({
+        type: "INPUT",
+        val: [...categoryCtx.categoryState.original, response.data.category],
+      });
+
       feedbackCtx.showFeedback({ message: "New category added." });
       props.closeHandler();
     } catch (error) {
