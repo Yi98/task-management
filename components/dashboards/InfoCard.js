@@ -9,47 +9,38 @@ import Typography from "@material-ui/core/Typography";
 const useStyles = makeStyles((theme) => ({
   root: {
     minWidth: 275,
-    backgroundColor: theme.palette.background.dark  ,
+    backgroundColor: theme.palette.background.dark,
   },
   bullet: {
     display: "inline-block",
     margin: "0 2px",
     transform: "scale(0.8)",
   },
-  title: {
-    fontSize: 14,
-  },
   pos: {
     marginBottom: 12,
+  },
+  remaining: {
+    fontSize: theme.spacing(3),
+    fontWeight: 300,
+  },
+  title: {
+    fontSize: theme.spacing(2),
   },
 }));
 
 export default function InfoCard(props) {
   const classes = useStyles();
-  const bull = <span className={classes.bullet}>•</span>;
 
   return (
     <Card className={classes.root} elevation={0}>
       <CardContent>
-        <Typography className={classes.title} gutterBottom>
-          Today tasks
-        </Typography>
-        {/* <Typography variant="h5" component="h2" className={classes.pos}>
+        <Typography gutterBottom variant="h6" className={classes.title}>
           {props.title}
-        </Typography> */}
-        {/* <Typography className={classes.pos} color="textSecondary">
-          adjective
-        </Typography> */}
-        {/* <Typography variant="body2" component="p">
-          well meaning and kindly.
-          <br />
-          {'"a benevolent smile"'}
-        </Typography> */}
-        <Typography variant="h3">0/14</Typography>
+        </Typography>
+        <Typography variant="body1" className={classes.remaining}>
+          3 tasks remaining
+        </Typography>
       </CardContent>
-      <CardActions>
-        <Button size="small">See details</Button>
-      </CardActions>
     </Card>
   );
 }

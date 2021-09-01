@@ -7,6 +7,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { getSession } from "next-auth/client";
 import dbConnect from "../../lib/dbConnect";
 import User from "../../models/User";
+import emptyPic from "../../public/empty.svg";
+import Image from "next/image";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -16,6 +18,14 @@ const useStyles = makeStyles((theme) => ({
   category: { paddingLeft: theme.spacing(1) },
   dueDate: { paddingLeft: theme.spacing(0.5) },
   completed: { paddingLeft: theme.spacing(7.5) },
+  illustrationIContainer: {
+    marginTop: "13%",
+    marginRight: "7%",
+    textAlign: "center",
+  },
+  empty: {
+    paddingLeft: "2%",
+  },
 }));
 
 export default function TodoPage(props) {
@@ -50,6 +60,22 @@ export default function TodoPage(props) {
           <AddTaskButton text="new task" addTask={addTaskHandler} />
         </Grid>
       </Grid>
+
+      {tasks.length == 0 && (
+        <div className={classes.illustrationIContainer}>
+          <Image
+            src={emptyPic}
+            alt="Illustration"
+            width={250}
+            height={250}
+            className={classes.illustration}
+          />
+          <Typography variant="h6" className={classes.empty}>
+            No tasks in progress
+          </Typography>
+        </div>
+      )}
+
       {tasks.length > 0 && (
         <Grid container>
           <Grid item xs={6} className={classes.title}>

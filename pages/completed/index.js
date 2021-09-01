@@ -7,6 +7,8 @@ import { Box } from "@material-ui/core";
 import { getSession } from "next-auth/client";
 import dbConnect from "../../lib/dbConnect";
 import User from "../../models/User";
+import emptyPic from "../../public/empty.svg";
+import Image from "next/image";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -15,6 +17,14 @@ const useStyles = makeStyles((theme) => ({
   title: { paddingLeft: theme.spacing(1.5) },
   category: { paddingLeft: theme.spacing(1) },
   dueDate: { paddingLeft: theme.spacing(0.5) },
+  illustrationIContainer: {
+    marginTop: "13%",
+    marginRight: "7%",
+    textAlign: "center",
+  },
+  empty: {
+    paddingLeft: "2%",
+  },
 }));
 
 export default function CompletedPage(props) {
@@ -38,6 +48,22 @@ export default function CompletedPage(props) {
           </Grid>
         </Box>
       </Grid>
+
+      {tasks.length == 0 && (
+        <div className={classes.illustrationIContainer}>
+          <Image
+            src={emptyPic}
+            alt="Illustration"
+            width={250}
+            height={250}
+            className={classes.illustration}
+          />
+          <Typography variant="h6" className={classes.empty}>
+            No completed tasks
+          </Typography>
+        </div>
+      )}
+
       {tasks.length > 0 && (
         <Grid container>
           <Grid item xs={6} className={classes.title}>
@@ -57,6 +83,7 @@ export default function CompletedPage(props) {
       {tasks.map((task) => (
         <TaskRow
           key={task._id}
+          taskId={task._id}
           title={task.title}
           category={task.category}
           dueDate={task.dueDate}
@@ -79,7 +106,7 @@ export async function getServerSideProps(context) {
   }
 
   await dbConnect();
-  
+
   const user = JSON.parse(
     JSON.stringify(
       await User.findById(session.user.id).populate({

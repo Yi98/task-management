@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
   illustrationInner: {
     marginTop: "10%",
   },
-
   square1: {
     position: "absolute",
     backgroundColor: "#fff",

@@ -11,7 +11,13 @@ export default function Dashboard(props) {
           <Typography variant="h5">Dashboard</Typography>
         </Grid>
         <Grid item xs={4}>
-          <InfoCard title="Today tasks" />
+          <InfoCard title="Due today" />
+        </Grid>
+        <Grid item xs={4}>
+          <InfoCard title="Due tomorrow" />
+        </Grid>
+        <Grid item xs={4}>
+          <InfoCard title="Due this week" />
         </Grid>
       </Grid>
     </Fragment>

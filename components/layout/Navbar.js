@@ -55,7 +55,7 @@ export default function Navbar() {
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" className={classes.title}>
-          Tasky
+          EzyTask
         </Typography>
         <Button
           color="inherit"
@@ -64,7 +64,7 @@ export default function Navbar() {
           onClick={handleClick}
           endIcon={<ArrowDropDownIcon />}
         >
-          Welcome back, Ng
+          Welcome back
         </Button>
         <Menu
           id="simple-menu"

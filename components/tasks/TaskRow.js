@@ -44,25 +44,31 @@ export default function TaskRow(props) {
   const router = useRouter();
 
   const checkTaskHandler = async (event) => {
+    event.stopPropagation();
     setChecked(event.target.checked);
 
-    const response = await axios.patch(`/api/tasks/${event.target.value}`, {
-      completed: true,
-    });
+    let response;
+    if (router.pathname == "/in-progress") {
+      response = await axios.patch(`/api/tasks/${event.target.value}`, {
+        completed: true,
+      });
+    } else if (router.pathname == "/completed") {
+      response = await axios.delete(`/api/tasks/${event.target.value}`);
+    }
 
-    event.stopPropagation();
     router.replace(router.asPath);
 
     feedbackCtx.showFeedback({ message: response.data.message });
   };
 
-  const selectTaskHandler = (task) => {
+  const selectTaskHandler = (task) => (event) => {
     setSelectedTask(task);
     categoryCtx.dispatchCategory({
       type: "SELECT_ACTIVE",
       val: task.category._id.toString(),
     });
     openDetailHandler();
+
   };
 
   const [isDetailOpened, setDetailOpened] = useState(false);
@@ -80,7 +86,7 @@ export default function TaskRow(props) {
       <Paper
         elevation={1}
         className={classes.paperRow}
-        onClick={selectTaskHandler.bind(null, props)}
+        onClick={selectTaskHandler(props)}
       >
         <Grid container className={classes.topContainer}>
           <Grid item xs={6}>

@@ -16,11 +16,6 @@ export const CategoryContextProvider = (props) => {
           selected: selectable.length > 0 ? selectable[0]._id : null,
         };
       } else if (action.type == "SELECT_ACTIVE") {
-        console.log({
-          original: state.original,
-          selectable: state.selectable,
-          selected: action.val,
-        });
         return {
           original: state.original,
           selectable: state.selectable,
