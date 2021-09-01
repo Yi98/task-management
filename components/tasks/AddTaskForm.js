@@ -16,8 +16,7 @@ import axios from "axios";
 import FeedbackContext from "../../store/feedback-context";
 import CategoryContext from "../../store/category-context";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-import { initializeFetcher } from "../../lib/swr";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   formDialogTitle: {
@@ -54,8 +53,6 @@ export default function AddTaskForm(props) {
         dueDate,
         category: categoryCtx.categoryState.selected,
       });
-
-      // props.addTask(response.data.task);
 
       props.closeHandler();
       feedbackCtx.showFeedback({ message: "New task added." });
@@ -105,7 +102,7 @@ export default function AddTaskForm(props) {
             variant="outlined"
             label="Deadline"
             type="date"
-            defaultValue="2021-08-21"
+            defaultValue={moment().format('YYYY-MM-DD')}
             fullWidth
             InputLabelProps={{
               shrink: true,

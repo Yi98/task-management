@@ -68,7 +68,6 @@ export default function TaskRow(props) {
       val: task.category._id.toString(),
     });
     openDetailHandler();
-
   };
 
   const [isDetailOpened, setDetailOpened] = useState(false);
@@ -95,7 +94,6 @@ export default function TaskRow(props) {
           <Grid item xs={3} className={classes.topContainer}>
             <Chip
               label={props.category.name}
-              clickable
               color="primary"
               size="small"
             />
