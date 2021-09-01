@@ -1,9 +1,16 @@
 import dbConnect from "../../../lib/dbConnect";
 import Task from "../../../models/Task";
+import User from "../../../models/User";
+import { getSession } from "next-auth/client";
 
 export default async function handler(req, res) {
-  const { method } = req;
+  const session = await getSession({ req });
+  if (!session) {
+    res.status(401).json({ success: false, message: "Not authenticated." });
+    return;
+  }
 
+  const { method } = req;
   await dbConnect();
 
   switch (method) {
@@ -23,59 +30,11 @@ export default async function handler(req, res) {
 
         await Task.populate(addedTask, { path: "category" });
 
+        const user = await User.findById(session.user.id);
+        user.tasks.push(addedTask._id);
+        await user.save();
+
         res.status(201).json({ success: true, task: addedTask });
-      } catch (error) {
-        console.log(error);
-        res.status(400).json({ success: false });
-      }
-      break;
-    case "PATCH":
-      try {
-        const newData = { completed: true };
-        const options = {
-          new: true, // returns updated document instead of old document
-          useFindAndModify: false,
-        };
-
-        const updatedTask = await Task.findByIdAndUpdate(
-          req.body.id,
-          newData,
-          options
-        );
-
-        if (!updatedTask) {
-          return res.status(400).json({
-            success: false,
-            message: "Task not found",
-          });
-        }
-
-        res.status(201).json({
-          success: true,
-          task: updatedTask,
-          message: "Task moved to completed",
-        });
-      } catch (error) {
-        console.log(error);
-        res.status(400).json({ success: false });
-      }
-      break;
-    case "DELETE":
-      try {
-        console.log(req.params);
-        const deletedTask = await Task.findByIdAndDelete(req.params.id);
-
-        if (!deletedTask) {
-          return res
-            .status(404)
-            .json({ success: false, message: `Task not found` });
-        }
-
-        return res.status(200).json({
-          success: true,
-          message: "Task deleted succesfully.",
-          deletedTask,
-        });
       } catch (error) {
         console.log(error);
         res.status(400).json({ success: false });

@@ -5,7 +5,9 @@ import { Chip, Grid, Typography } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import axios from "axios";
 import FeedbackContext from "../../store/feedback-context";
+import CategoryContext from "../../store/category-context";
 import TaskDetails from "../../components/tasks/TaskDetails";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,25 +39,33 @@ export default function TaskRow(props) {
 
   const [checked, setChecked] = useState(true);
   const feedbackCtx = useContext(FeedbackContext);
+  const categoryCtx = useContext(CategoryContext);
   const [selectedTask, setSelectedTask] = useState({});
+  const router = useRouter();
 
   const checkTaskHandler = async (event) => {
     setChecked(event.target.checked);
 
-    const response = await axios.patch("/api/tasks", {
-      id: event.target.value,
+    const response = await axios.patch(`/api/tasks/${event.target.value}`, {
+      completed: true,
     });
 
-    if (response.data.success) {
-      props.removeTask(response.data.task);
-    }
+    event.stopPropagation();
+    router.replace(router.asPath);
+
+    // if (response.data.success) {
+    //   props.removeTask(response.data.task);
+    // }
 
     feedbackCtx.showFeedback({ message: response.data.message });
   };
 
   const selectTaskHandler = (task) => {
     setSelectedTask(task);
-    console.log(task);
+    categoryCtx.dispatchCategory({
+      type: "SELECT_ACTIVE",
+      val: task.category._id.toString(),
+    });
     openDetailHandler();
   };
 
@@ -68,8 +78,6 @@ export default function TaskRow(props) {
   const closeDetailHandler = () => {
     setDetailOpened(false);
   };
-
-  // useEffect(() => {});
 
   return (
     <div className={classes.root}>
@@ -96,7 +104,7 @@ export default function TaskRow(props) {
           <Grid item xs={1} className={classes.checkbox}>
             <Checkbox
               value={props.taskId}
-              onChange={checkTaskHandler}
+              onClick={checkTaskHandler}
               color="primary"
               inputProps={{ "aria-label": "checkbox" }}
             />
@@ -108,6 +116,7 @@ export default function TaskRow(props) {
         isOpened={isDetailOpened}
         closeHandler={closeDetailHandler}
         task={selectedTask}
+        removeTask={props.removeTask}
       />
     </div>
   );

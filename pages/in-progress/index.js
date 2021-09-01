@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import TaskRow from "../../components/tasks/TaskRow";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { isAuthenticated } from "../../lib/auth";
+import { getSession } from "next-auth/client";
 import dbConnect from "../../lib/dbConnect";
 import Task from "../../models/Task";
 import Category from "../../models/Category";
@@ -13,6 +13,10 @@ const useStyles = makeStyles((theme) => ({
   container: {
     marginBottom: theme.spacing(2.5),
   },
+  title: { paddingLeft: theme.spacing(1.5) },
+  category: { paddingLeft: theme.spacing(1) },
+  dueDate: { paddingLeft: theme.spacing(0.5) },
+  completed: { paddingLeft: theme.spacing(7.5) },
 }));
 
 export default function TodoPage(props) {
@@ -23,13 +27,13 @@ export default function TodoPage(props) {
     setTasks(props.tasks);
   }, [props.tasks]);
 
-  function addTaskHandler(newTask) {
-    setTasks((prevState) => [...prevState, newTask]);
+  function addTaskHandler(addedTask) {
+    setTasks((prevState) => [...prevState, addedTask]);
   }
 
-  function removeTasksHandler(completedTask) {
+  function removeTasksHandler(removedTask) {
     setTasks((prevState) => {
-      return prevState.filter((task) => task._id !== completedTask._id);
+      return prevState.filter((task) => task._id !== removedTask._id);
     });
   }
 
@@ -51,6 +55,22 @@ export default function TodoPage(props) {
           />
         </Grid>
       </Grid>
+      {tasks.length > 0 && (
+        <Grid container>
+          <Grid item xs={6} className={classes.title}>
+            <Typography variant="subtitle2">Title</Typography>
+          </Grid>
+          <Grid item xs={3} className={classes.category}>
+            <Typography variant="subtitle2">Category</Typography>
+          </Grid>
+          <Grid item xs={1} className={classes.dueDate}>
+            <Typography variant="subtitle2">Due Date</Typography>
+          </Grid>
+          <Grid item xs={2} className={classes.completed}>
+            <Typography variant="subtitle2">Mark as completed</Typography>
+          </Grid>
+        </Grid>
+      )}
       {tasks.map((task) => (
         <TaskRow
           key={task._id}
@@ -66,8 +86,17 @@ export default function TodoPage(props) {
 }
 
 export async function getServerSideProps(context) {
+  const session = await getSession({ req: context.req });
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   await dbConnect();
-  const session = await isAuthenticated(context.req);
   let condition = { completed: false };
 
   if (context.query.category) {

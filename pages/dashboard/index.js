@@ -1,7 +1,7 @@
 import { Grid, Typography } from "@material-ui/core";
 import { Fragment } from "react";
 import InfoCard from "../../components/dashboards/InfoCard";
-import { isAuthenticated } from "../../lib/auth";
+import { getSession } from "next-auth/client";
 
 export default function Dashboard(props) {
   return (
@@ -19,6 +19,16 @@ export default function Dashboard(props) {
 }
 
 export async function getServerSideProps(context) {
-  const session = await isAuthenticated(context.req);
+  const session = await getSession({ req: context.req });
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   return { props: { session } };
 }

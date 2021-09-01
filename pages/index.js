@@ -5,7 +5,7 @@ import SignupForm from "../components/auth/SignupForm";
 import LoginForm from "../components/auth/LoginForm";
 import Image from "next/image";
 import profilePic from "../public/illustration.svg";
-import { allowViewPage } from "../lib/auth";
+import { getSession } from "next-auth/client";
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -81,5 +81,17 @@ export default function MainPage() {
 }
 
 export async function getServerSideProps(context) {
-  return await allowViewPage(context.req);
+  const session = await getSession({ req: context.req });
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+      props: { session },
+    };
+  }
+
+  return { props: {} };
 }

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import timestamps from "mongoose-timestamp";
 
 const TaskSchema = new mongoose.Schema({
   title: {
@@ -15,5 +16,7 @@ const TaskSchema = new mongoose.Schema({
     ref: "Category",
   },
 });
+
+TaskSchema.plugin(timestamps);
 
 export default mongoose.models.Task || mongoose.model("Task", TaskSchema);

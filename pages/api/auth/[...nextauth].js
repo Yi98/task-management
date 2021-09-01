@@ -26,8 +26,22 @@ export default NextAuth({
           throw new Error("Wrong password.");
         }
 
-        return { email: user.email, id: user.id };
+        return { email: user.email, id: user._id };
       },
     }),
   ],
+  callbacks: {
+    async jwt(token, user, account, profile, isNewUser) {
+      if (user?.id) {
+        token.id = user.id;
+      }
+
+      return token;
+    },
+
+    async session(session, token) {
+      session.user.id = token.id;
+      return session;
+    },
+  },
 });

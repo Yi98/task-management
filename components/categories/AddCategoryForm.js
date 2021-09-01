@@ -8,6 +8,7 @@ import { Button, Grid, IconButton, TextField } from "@material-ui/core";
 import axios from "axios";
 import FeedbackContext from "../../store/feedback-context";
 import CategoryContext from "../../store/category-context";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -29,6 +30,7 @@ export default function AddCategoryForm(props) {
   const classes = useStyles();
   const nameInputRef = useRef();
   const feedbackCtx = useContext(FeedbackContext);
+  const router = useRouter();
   const categoryCtx = useContext(CategoryContext);
 
   const submitCategoryHandler = async function () {
@@ -41,9 +43,9 @@ export default function AddCategoryForm(props) {
         type: "INPUT",
         val: [...categoryCtx.categoryState.original, response.data.category],
       });
-
-      feedbackCtx.showFeedback({ message: "New category added." });
+      
       props.closeHandler();
+      feedbackCtx.showFeedback({ message: "New category added." });
     } catch (error) {
       console.log(error);
     }

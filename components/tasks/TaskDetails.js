@@ -14,7 +14,9 @@ import Box from "@material-ui/core/Box";
 import { IconButton } from "@material-ui/core";
 import axios from "axios";
 import FeedbackContext from "../../store/feedback-context";
+import CategoryContext from "../../store/category-context";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
   formDialogTitle: {
@@ -35,25 +37,27 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function TaskDetails(props) {
   const classes = useStyles();
+  const router = useRouter();
   const titleInputRef = useRef();
   const dateInputRef = useRef();
   const feedbackCtx = useContext(FeedbackContext);
+  const categoryCtx = useContext(CategoryContext);
   const [selectedCategory, setSelectedCategory] = useState();
 
-  async function editTaskHandler() {
+  async function editTaskHandler(id) {
     const title = titleInputRef.current.value;
     const dueDate = dateInputRef.current.value;
 
     try {
-      // const response = await axios.post("/api/tasks", {
-      //   title,
-      //   dueDate,
-      //   category: selectedCategory,
-      // });
-      // props.addTask(response.data.task);
+      const response = await axios.patch(`/api/tasks/${id}`, {
+        title,
+        dueDate,
+        category: categoryCtx.categoryState.selected,
+      });
 
-      // feedbackCtx.showFeedback({ message: "New task added." });
       props.closeHandler();
+      feedbackCtx.showFeedback({ message: response.data.message });
+      router.replace(router.asPath);
     } catch (error) {
       console.log(error);
     }
@@ -61,15 +65,17 @@ export default function TaskDetails(props) {
 
   async function deleteTaskHandler(id) {
     try {
+      const response = await axios.delete(`/api/tasks/${id}`);
 
-      const response = await axios.delete("/api/tasks", { params: { id } });
-      console.log(response);
+      // if (response.data.success) {
+      //   props.removeTask(response.data.deletedTask);
+      // }
 
-      // props.addTask(response.data.task);
+      feedbackCtx.showFeedback({ message: response.data.message });
+      router.replace(router.asPath);
 
-      feedbackCtx.showFeedback({ message: "Task deleted." });
 
-      props.closeHandler();
+      // props.closeHandler();
     } catch (error) {
       console.log(error);
     }
@@ -103,7 +109,7 @@ export default function TaskDetails(props) {
         <Box mb={3}>
           <TextField
             inputRef={titleInputRef}
-            value={props.task.title}
+            defaultValue={props.task.title}
             required
             variant="outlined"
             label="Enter task headline"
@@ -114,13 +120,12 @@ export default function TaskDetails(props) {
         <Box mb={3}>
           <TextField
             inputRef={dateInputRef}
-            value={props.task.dueDate}
+            defaultValue={props.task.dueDate}
             id="date"
             required
             variant="outlined"
             label="Deadline"
             type="date"
-            defaultValue="2021-08-21"
             fullWidth
             InputLabelProps={{
               shrink: true,
@@ -128,11 +133,10 @@ export default function TaskDetails(props) {
           />
         </Box>
         <Box mb={3}>
-          {/* <CategoryChips
-            categories={props.categories}
-            selected={props.category._id}
+          <CategoryChips
+            selected={props.category}
             selectCategoryHandler={selectCategoryHandler}
-          /> */}
+          />
         </Box>
       </DialogContent>
       <Box px={1.5} pb={1.5}>
@@ -148,8 +152,8 @@ export default function TaskDetails(props) {
             Delete
           </Button>
           <Button
-            onClick={editTaskHandler}
-            disabled
+            onClick={editTaskHandler.bind(null, props.task.taskId)}
+            // disabled
             variant="contained"
             endIcon={<CheckIcon />}
             color="primary"

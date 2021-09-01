@@ -15,6 +15,7 @@ import { IconButton } from "@material-ui/core";
 import axios from "axios";
 import FeedbackContext from "../../store/feedback-context";
 import CategoryContext from "../../store/category-context";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
   formDialogTitle: {
@@ -39,25 +40,23 @@ export default function AddTaskForm(props) {
   const dateInputRef = useRef();
   const feedbackCtx = useContext(FeedbackContext);
   const categoryCtx = useContext(CategoryContext);
+  const router = useRouter();
 
   async function submitTaskHandler() {
     const title = titleInputRef.current.value;
     const dueDate = dateInputRef.current.value;
 
     try {
-      categoryCtx.dispatchCategory({
-        type: "INCREMENT",
-      });
-
       const response = await axios.post("/api/tasks", {
         title,
         dueDate,
         category: categoryCtx.categoryState.selected,
       });
-      props.addTask(response.data.task);
 
-      feedbackCtx.showFeedback({ message: "New task added." });
+      // props.addTask(response.data.task);
       props.closeHandler();
+      feedbackCtx.showFeedback({ message: "New task added." });
+      router.replace(router.asPath);
     } catch (error) {
       console.log(error);
     }

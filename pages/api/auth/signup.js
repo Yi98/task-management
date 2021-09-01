@@ -13,11 +13,16 @@ export default async function handler(req, res) {
         const { email, password } = req.body;
         const hashedPassword = await hashPassword(password);
 
-        const newUser = new User({ email, password: hashedPassword });
+        const newUser = new User({
+          email,
+          password: hashedPassword,
+        });
+
         const addedUser = await newUser.save();
 
         res.status(201).json({ success: true, data: addedUser });
       } catch (error) {
+        console.log(error);
         res.status(400).json({ success: false });
       }
       break;

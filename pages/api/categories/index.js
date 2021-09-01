@@ -1,11 +1,18 @@
 import dbConnect from "../../../lib/dbConnect";
 import Category from "../../../models/Category";
 import Task from "../../../models/Task";
-import { useRouter } from "next/router";
+import User from "../../../models/User";
+import { getSession } from "next-auth/client";
 
 export default async function handler(req, res) {
-  const { method } = req;
+  const session = await getSession({ req });
+  if (!session) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Not authenticated." });
+  }
 
+  const { method } = req;
   await dbConnect();
 
   switch (method) {
@@ -50,10 +57,9 @@ export default async function handler(req, res) {
 
         categories = [{ name: "All", sum: total }, ...categories, ...exclusive];
 
-        // console.log(categories);
-
         res.status(200).json({ success: true, categories: categories });
       } catch (error) {
+        console.log(error);
         res.status(400).json({ success: false });
       }
       break;
@@ -63,8 +69,13 @@ export default async function handler(req, res) {
         const newCategory = new Category({ name });
         const addedCategory = await newCategory.save();
 
+        const user = await User.findById(session.user.id);
+        user.categories.push(addedCategory._id);
+        await user.save();
+
         res.status(201).json({ success: true, category: addedCategory });
       } catch (error) {
+        console.log(error);
         res.status(400).json({ success: false });
       }
       break;

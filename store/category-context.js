@@ -26,19 +26,6 @@ export const CategoryContextProvider = (props) => {
           selectable: state.selectable,
           selected: action.val,
         };
-      } else if (action.type == "INCREMENT") {
-        for (let i = 0; i < state.original.length; i++) {
-          if (state.original[i]._id == state.selected) {
-            let sum = state.original[i].sum;
-            state.original[i].sum = sum + 1;
-          }
-        }
-
-        return {
-          original: state.original,
-          selectable: state.selectable,
-          selected: state.selected,
-        };
       }
     },
     { original: [], selectable: [], selected: null }
