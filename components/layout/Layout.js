@@ -37,7 +37,7 @@ const Layout = (props) => {
         </Fragment>
       )}
       {isIndexPage && <Fragment>{props.children}</Fragment>}
-      
+
       {activeFeedback && <Feedback message={activeFeedback.message} />}
     </Fragment>
   );

@@ -5,17 +5,19 @@ import { red } from "@material-ui/core/colors";
 let theme = createTheme({
   palette: {
     primary: {
-      main: "#3F51B5",
+      main: "#5F69EF",
     },
     secondary: {
-      main: "#3F51B5",
+      main: "#5F69EF",
     },
     error: {
       main: red.A400,
     },
     background: {
       main: "#FFF",
-      dark: "#F4F4F4",
+      dark: "#EBEFFF",
+      light: "#F5F7FF",
+      whiteDark: "#F4F4F4",
     },
     neutral: {},
   },

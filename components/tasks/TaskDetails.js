@@ -67,15 +67,8 @@ export default function TaskDetails(props) {
     try {
       const response = await axios.delete(`/api/tasks/${id}`);
 
-      // if (response.data.success) {
-      //   props.removeTask(response.data.deletedTask);
-      // }
-
       feedbackCtx.showFeedback({ message: response.data.message });
       router.replace(router.asPath);
-
-
-      // props.closeHandler();
     } catch (error) {
       console.log(error);
     }

@@ -6,8 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { getSession } from "next-auth/client";
 import dbConnect from "../../lib/dbConnect";
-import Task from "../../models/Task";
-import Category from "../../models/Category";
+import User from "../../models/User";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -48,11 +47,7 @@ export default function TodoPage(props) {
           <Typography variant="h5">In progress</Typography>
         </Grid>
         <Grid item>
-          <AddTaskButton
-            text="new task"
-            addTask={addTaskHandler}
-            categories={props.categories}
-          />
+          <AddTaskButton text="new task" addTask={addTaskHandler} />
         </Grid>
       </Grid>
       {tasks.length > 0 && (
@@ -97,22 +92,29 @@ export async function getServerSideProps(context) {
   }
 
   await dbConnect();
-  let condition = { completed: false };
-
-  if (context.query.category) {
-    condition = { ...condition, category: context.query.category };
-  }
-
-  const tasks = JSON.parse(
-    JSON.stringify(await Task.find(condition).populate("category"))
+  const user = JSON.parse(
+    JSON.stringify(
+      await User.findById(session.user.id).populate({
+        path: "tasks",
+        populate: "category",
+      })
+    )
   );
-  const categories = JSON.parse(JSON.stringify(await Category.find({})));
+
+  const tasks = user.tasks.filter((task) => {
+    if (!context.query.category) {
+      return task.completed == false;
+    }
+
+    return (
+      task.completed == false && task.category._id == context.query.category
+    );
+  });
 
   return {
     props: {
       session,
       tasks,
-      categories,
     },
   };
 }

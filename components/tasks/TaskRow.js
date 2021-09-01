@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paperRow: {
     "&:hover": {
-      backgroundColor: theme.palette.background.dark,
+      backgroundColor: theme.palette.background.whiteDark,
     },
   },
 }));
@@ -52,10 +52,6 @@ export default function TaskRow(props) {
 
     event.stopPropagation();
     router.replace(router.asPath);
-
-    // if (response.data.success) {
-    //   props.removeTask(response.data.task);
-    // }
 
     feedbackCtx.showFeedback({ message: response.data.message });
   };

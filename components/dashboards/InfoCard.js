@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 const useStyles = makeStyles((theme) => ({
   root: {
     minWidth: 275,
-    backgroundColor: "#F1F2F7",
+    backgroundColor: theme.palette.background.dark  ,
   },
   bullet: {
     display: "inline-block",

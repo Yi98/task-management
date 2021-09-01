@@ -18,46 +18,37 @@ export default async function handler(req, res) {
   switch (method) {
     case "GET":
       try {
-        const condition =
-          req.query.pathname == "/completed"
-            ? ["$completed", 1, 0]
-            : ["$completed", 0, 1];
+        const isCompleted = req.query.pathname == "/completed" ? true : false;
 
-        const allCategories = await Category.find();
+        const user = (
+          await User.findById(session.user.id)
+            .populate("categories")
+            .populate("tasks")
+        ).toObject();
 
-        let categories = await Task.aggregate([
-          {
-            $group: {
-              _id: "$category",
-              sum: {
-                $sum: { $cond: condition },
-              },
-            },
-          },
-          {
-            $lookup: {
-              from: Category.collection.name,
-              localField: "_id",
-              foreignField: "_id",
-              as: "category",
-            },
-          },
-          { $project: { name: "$category.name", sum: 1 } },
-          { $unwind: { path: "$name" } },
-        ]);
-
-        const exclusive = allCategories.filter(
-          (elem) => !categories.find(({ _id }) => elem._id == _id.toString())
-        );
+        let categories = user.categories;
 
         let total = 0;
+        const categoryCount = user.tasks
+          .filter((task) => task.completed == isCompleted)
+          .reduce((obj, current) => {
+            total += 1;
+            obj[current.category] = (obj[current.category] || 0) + 1;
+            return obj;
+          }, {});
+
         for (let i = 0; i < categories.length; i++) {
-          total += categories[i].sum;
+          for (let [key, value] of Object.entries(categoryCount)) {
+            if (categories[i]._id.toString() == key) {
+              categories[i].sum = value;
+              break;
+            }
+          }
         }
 
-        categories = [{ name: "All", sum: total }, ...categories, ...exclusive];
+        categories = [{ name: "All", sum: total }, ...categories];
 
-        res.status(200).json({ success: true, categories: categories });
+        res.status(200).json({ success: true, categories });
       } catch (error) {
         console.log(error);
         res.status(400).json({ success: false });

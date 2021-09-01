@@ -16,6 +16,8 @@ import axios from "axios";
 import FeedbackContext from "../../store/feedback-context";
 import CategoryContext from "../../store/category-context";
 import { useRouter } from "next/router";
+import useSWR from "swr";
+import { initializeFetcher } from "../../lib/swr";
 
 const useStyles = makeStyles((theme) => ({
   formDialogTitle: {
@@ -54,6 +56,7 @@ export default function AddTaskForm(props) {
       });
 
       // props.addTask(response.data.task);
+
       props.closeHandler();
       feedbackCtx.showFeedback({ message: "New task added." });
       router.replace(router.asPath);

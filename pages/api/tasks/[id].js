@@ -15,7 +15,6 @@ export default async function handler(req, res) {
   switch (method) {
     case "PATCH":
       try {
-        console.log(req.body);
         const newData = req.body;
         const options = {
           new: true, // returns updated document instead of old document

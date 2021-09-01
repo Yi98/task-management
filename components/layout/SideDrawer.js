@@ -45,15 +45,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.getContrastText(theme.palette.primary.main),
     backgroundColor: theme.palette.primary.main,
     fontWeight: "bold",
-    marginRight: theme.spacing(0.5),
-  },
-  addCategoryAvatar: {
-    color: theme.palette.getContrastText("#EEE"),
-    backgroundColor: "#EEE",
-    marginLeft: theme.spacing(0.5),
-    marginRight: theme.spacing(2),
-    width: theme.spacing(3),
-    height: theme.spacing(3),
+    marginRight: theme.spacing(1),
   },
   activeMenu: {
     backgroundColor: theme.palette.background.dark,
@@ -91,11 +83,7 @@ export default function SideDrawer(props) {
     `/api/categories?pathname=${router.pathname}`,
     fetcher,
     {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      refreshWhenOffline: false,
-      refreshWhenHidden: false,
-      refreshInterval: 0,
+      refreshInterval: 1000,
     }
   );
 
@@ -216,11 +204,6 @@ export default function SideDrawer(props) {
             onClick={openHandler}
             className={classes.categoryItem}
           >
-            {/* <Avatar
-              className={`${classes.avatar} ${classes.addCategoryAvatar}`}
-            >
-              <AddIcon />
-            </Avatar> */}
             <AddIcon className={classes.addIcon} />
 
             <ListItemText primary="New Category" />

@@ -6,8 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { getSession } from "next-auth/client";
 import dbConnect from "../../lib/dbConnect";
-import Task from "../../models/Task";
-import Category from "../../models/Category";
+import User from "../../models/User";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -80,17 +79,25 @@ export async function getServerSideProps(context) {
   }
 
   await dbConnect();
-  let condition = { completed: true };
-
-  if (context.query.category) {
-    condition = { ...condition, category: context.query.category };
-  }
-
-  const tasks = JSON.parse(
-    JSON.stringify(await Task.find(condition).populate("category"))
+  
+  const user = JSON.parse(
+    JSON.stringify(
+      await User.findById(session.user.id).populate({
+        path: "tasks",
+        populate: "category",
+      })
+    )
   );
 
-  const categories = JSON.parse(JSON.stringify(await Category.find({})));
+  const tasks = user.tasks.filter((task) => {
+    if (!context.query.category) {
+      return task.completed == true;
+    }
 
-  return { props: { session, tasks, categories } };
+    return (
+      task.completed == true && task.category._id == context.query.category
+    );
+  });
+
+  return { props: { session, tasks: tasks } };
 }

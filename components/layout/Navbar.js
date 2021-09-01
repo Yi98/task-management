@@ -73,8 +73,8 @@ export default function Navbar() {
           open={Boolean(anchorEl)}
           onClose={handleClose}
           getContentAnchorEl={null}
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          transformOrigin={{ vertical: "top", horizontal: "right" }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+          transformOrigin={{ vertical: "top", horizontal: "left" }}
         >
           <MenuItem onClick={logoutHandler}>Logout</MenuItem>
         </Menu>
