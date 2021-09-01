@@ -118,14 +118,13 @@ export async function getServerSideProps(context) {
   }
 
   await dbConnect();
-  const user = JSON.parse(
-    JSON.stringify(
-      await User.findById(session.user.id).populate({
-        path: "tasks",
-        populate: "category",
-      })
-    )
-  );
+
+  let user = await User.findById(session.user.id).populate({
+    path: "tasks",
+    populate: "category",
+  });
+
+  user = JSON.parse(JSON.stringify(user));
 
   const tasks = user.tasks.filter((task) => {
     if (!context.query.category) {

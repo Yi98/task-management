@@ -2,8 +2,8 @@ import { Grid, Typography } from "@material-ui/core";
 import { Fragment } from "react";
 import InfoCard from "../../components/dashboards/InfoCard";
 import { getSession } from "next-auth/client";
-import dbConnect from "../../lib/dbConnect";
 import User from "../../models/User";
+import dbConnect from "../../lib/dbConnect";
 import moment from "moment";
 
 export default function Dashboard(props) {
@@ -39,14 +39,13 @@ export async function getServerSideProps(context) {
   }
 
   await dbConnect();
-  const user = JSON.parse(
-    JSON.stringify(
-      await User.findById(session.user.id).populate({
-        path: "tasks",
-        populate: "category",
-      })
-    )
-  );
+
+  let user = await User.findById(session.user.id).populate({
+    path: "tasks",
+    populate: "category",
+  });
+
+  user = JSON.parse(JSON.stringify(user));
 
   const dueCount = { today: 0, tomorrow: 0, thisWeek: 0 };
   let tasks = user.tasks.filter((task) => task.completed == false);

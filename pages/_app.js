@@ -6,7 +6,6 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import { CssBaseline } from "@material-ui/core";
 import { Provider } from "next-auth/client";
 import { CategoryContextProvider } from "../store/category-context";
-import { TaskContextProvider } from "../store/task-context";
 import { FeedbackContextProvider } from "../store/feedback-context";
 
 export default function MyApp({ Component, pageProps }) {
@@ -25,11 +24,9 @@ export default function MyApp({ Component, pageProps }) {
         <CssBaseline />
         <FeedbackContextProvider>
           <CategoryContextProvider>
-            <TaskContextProvider>
               <Layout>
                 <Component {...pageProps} />
               </Layout>
-            </TaskContextProvider>
           </CategoryContextProvider>
         </FeedbackContextProvider>
       </ThemeProvider>
