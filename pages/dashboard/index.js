@@ -5,6 +5,8 @@ import { getSession } from "next-auth/client";
 import User from "../../models/User";
 import dbConnect from "../../lib/dbConnect";
 import moment from "moment";
+import nc from "next-connect";
+import { isAuthenticated } from "../../lib/auth";
 
 export default function Dashboard(props) {
   return (
@@ -28,15 +30,16 @@ export default function Dashboard(props) {
 }
 
 export async function getServerSideProps(context) {
-  const session = await getSession({ req: context.req });
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
+  // const session = await getSession({ req: context.req });
+  // if (!session) {
+  //   return {
+  //     redirect: {
+  //       destination: "/",
+  //       permanent: false,
+  //     },
+  //   };
+  // }
+  const isAuthenticated = await isAuthenticated();
 
   await dbConnect();
 
