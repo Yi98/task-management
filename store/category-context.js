@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useReducer } from "react";
+import { createContext, useReducer } from "react";
 
 const CategoryContext = createContext({
   dispatchCategory: (option) => {},
@@ -9,7 +9,11 @@ export const CategoryContextProvider = (props) => {
   const [categoryState, dispatchCategory] = useReducer(
     (state, action) => {
       if (action.type === "INPUT") {
-        const selectable = action.val.filter((item) => item._id);
+        let selectable = [];
+        if (action.val) {
+          selectable = action.val.filter((item) => item._id);
+        }
+
         return {
           original: action.val,
           selectable,

@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexWrap: "wrap",
-    cursor: "pointer",
     "& > *": {
       marginTop: theme.spacing(0.3),
       width: "100%",
@@ -29,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paperRow: {
     "&:hover": {
+      cursor: "pointer",
       backgroundColor: theme.palette.background.whiteDark,
     },
   },
@@ -84,19 +84,17 @@ export default function TaskRow(props) {
     <div className={classes.root}>
       <Paper
         elevation={1}
-        className={classes.paperRow}
-        onClick={selectTaskHandler(props)}
+        className={router.pathname == "/in-progress" && classes.paperRow}
+        onClick={
+          router.pathname == "/in-progress" ? selectTaskHandler(props) : null
+        }
       >
         <Grid container className={classes.topContainer}>
           <Grid item xs={6}>
             <Typography variant="subtitle1">{props.title}</Typography>
           </Grid>
           <Grid item xs={3} className={classes.topContainer}>
-            <Chip
-              label={props.category.name}
-              color="primary"
-              size="small"
-            />
+            <Chip label={props.category.name} color="primary" size="small" />
           </Grid>
           <Grid item xs={2}>
             <Typography variant="subtitle1">{props.dueDate}</Typography>

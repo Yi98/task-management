@@ -1,12 +1,12 @@
 import { Grid, Typography } from "@material-ui/core";
 import { Fragment } from "react";
 import InfoCard from "../../components/dashboards/InfoCard";
-import { getSession } from "next-auth/client";
 import User from "../../models/User";
+import Task from "../../models/Task";
+import Category from "../../models/Category";
 import dbConnect from "../../lib/dbConnect";
 import moment from "moment";
-import nc from "next-connect";
-import { isAuthenticated } from "../../lib/auth";
+import { isAuthenticated } from "../../middlewares/auth";
 
 export default function Dashboard(props) {
   return (
@@ -29,29 +29,24 @@ export default function Dashboard(props) {
   );
 }
 
-export async function getServerSideProps(context) {
-  // const session = await getSession({ req: context.req });
-  // if (!session) {
-  //   return {
-  //     redirect: {
-  //       destination: "/",
-  //       permanent: false,
-  //     },
-  //   };
-  // }
-  const isAuthenticated = await isAuthenticated();
-
+export const getServerSideProps = isAuthenticated(async (context) => {
   await dbConnect();
+  const userId = context.req.session.user.id;
 
-  let user = await User.findById(session.user.id).populate({
+  let user = await User.findById(userId).populate({
     path: "tasks",
-    populate: "category",
+    model: Task,
+    populate: { path: "category", model: Category },
   });
 
   user = JSON.parse(JSON.stringify(user));
 
   const dueCount = { today: 0, tomorrow: 0, thisWeek: 0 };
-  let tasks = user.tasks.filter((task) => task.completed == false);
+  let tasks = [];
+
+  if (user) {
+    tasks = user.tasks.filter((task) => task.completed == false);
+  }
 
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
@@ -78,5 +73,5 @@ export async function getServerSideProps(context) {
     }
   }
 
-  return { props: { session, dueCount } };
-}
+  return { props: { session: context.req.session, dueCount } };
+});

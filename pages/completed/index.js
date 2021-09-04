@@ -7,8 +7,11 @@ import { Box } from "@material-ui/core";
 import { getSession } from "next-auth/client";
 import dbConnect from "../../lib/dbConnect";
 import User from "../../models/User";
+import Task from "../../models/Task";
+import Category from "../../models/Category";
 import emptyPic from "../../public/empty.svg";
 import Image from "next/image";
+import { isAuthenticated } from "../../middlewares/auth";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -93,36 +96,30 @@ export default function CompletedPage(props) {
   );
 }
 
-export async function getServerSideProps(context) {
-  const session = await getSession({ req: context.req });
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
+export const getServerSideProps = isAuthenticated(async (context) => {
   await dbConnect();
+  const userId = context.req.session.user.id;
 
-  let user = await User.findById(session.user.id).populate({
+  let user = await User.findById(userId).populate({
     path: "tasks",
-    populate: "category",
+    model: Task,
+    populate: { path: "category", model: Category },
   });
 
   user = JSON.parse(JSON.stringify(user));
+  let tasks = [];
 
-  const tasks = user.tasks.filter((task) => {
-    if (!context.query.category) {
-      return task.completed == true;
-    }
+  if (user) {
+    tasks = user.tasks.filter((task) => {
+      if (!context.query.category) {
+        return task.completed == true;
+      }
 
-    return (
-      task.completed == true && task.category._id == context.query.category
-    );
-  });
+      return (
+        task.completed == true && task.category._id == context.query.category
+      );
+    });
+  }
 
-  return { props: { session, tasks: tasks } };
-}
+  return { props: { session: context.req.session, tasks: tasks } };
+});

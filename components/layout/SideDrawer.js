@@ -184,20 +184,21 @@ export default function SideDrawer(props) {
         <Divider className={classes.divider} />
 
         <List>
-          {categoryCtx.categoryState.original.map((category) => (
-            <ListItem
-              button
-              key={category.name}
-              onClick={selectCategoryHandler.bind(null, category._id)}
-              className={classes.categoryItem}
-            >
-              <ListItemText
-                primary={category.name}
-                className={`${classes.categoryName}`}
-              />
-              <Avatar className={classes.avatar}>{category.sum || 0}</Avatar>
-            </ListItem>
-          ))}
+          {categoryCtx.categoryState.original &&
+            categoryCtx.categoryState.original.map((category) => (
+              <ListItem
+                button
+                key={category.name}
+                onClick={selectCategoryHandler.bind(null, category._id)}
+                className={classes.categoryItem}
+              >
+                <ListItemText
+                  primary={category.name}
+                  className={`${classes.categoryName}`}
+                />
+                <Avatar className={classes.avatar}>{category.sum || 0}</Avatar>
+              </ListItem>
+            ))}
           <ListItem
             button
             key="add"

@@ -11,7 +11,7 @@ import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
 import CategoryChips from "./CategoryChips";
 import Box from "@material-ui/core/Box";
-import { IconButton } from "@material-ui/core";
+import { IconButton, Typography } from "@material-ui/core";
 import axios from "axios";
 import FeedbackContext from "../../store/feedback-context";
 import CategoryContext from "../../store/category-context";
@@ -102,7 +102,7 @@ export default function AddTaskForm(props) {
             variant="outlined"
             label="Deadline"
             type="date"
-            defaultValue={moment().format('YYYY-MM-DD')}
+            defaultValue={moment().format("YYYY-MM-DD")}
             fullWidth
             InputLabelProps={{
               shrink: true,
@@ -110,7 +110,12 @@ export default function AddTaskForm(props) {
           />
         </Box>
         <Box mb={3}>
-          <CategoryChips />
+          {categoryCtx.categoryState.selectable.length > 0 && <CategoryChips />}
+          {categoryCtx.categoryState.selectable.length == 0 && (
+            <Typography variant="subtitle2">
+              *Please add category before adding task.
+            </Typography>
+          )}
         </Box>
       </DialogContent>
       <Box px={1.5} pb={1.5}>
@@ -121,6 +126,7 @@ export default function AddTaskForm(props) {
             color="secondary"
             endIcon={<CheckIcon />}
             disableElevation
+            disabled={categoryCtx.categoryState.selectable.length == 0}
           >
             Confirm
           </Button>
