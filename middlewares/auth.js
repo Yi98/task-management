@@ -17,18 +17,3 @@ export function isAuthenticated(gssp) {
     return await gssp(context, session); // Continue on to call `getServerSideProps` logic
   };
 }
-
-export async function test(req) {
-  const session = await getSession({ req });
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  return session;
-}
