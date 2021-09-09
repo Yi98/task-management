@@ -8,34 +8,38 @@ import FeedbackContext from "../../store/feedback-context";
 import CategoryContext from "../../store/category-context";
 import TaskDetails from "../../components/tasks/TaskDetails";
 import { useRouter } from "next/router";
+import CircleCheckedFilled from "@material-ui/icons/CheckCircle";
+import CircleUnchecked from "@material-ui/icons/RadioButtonUnchecked";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-    flexWrap: "wrap",
-    "& > *": {
-      marginTop: theme.spacing(0.3),
-      width: "100%",
-      borderLeft: `5px solid ${theme.palette.primary.main}`,
-      padding: "1% 0 1% 10px",
+const useStyles = (props) =>
+  makeStyles((theme) => ({
+    root: {
+      display: "flex",
+      flexWrap: "wrap",
+      "& > *": {
+        marginTop: theme.spacing(0.3),
+        width: "100%",
+        // borderLeft: `5px solid ${theme.palette.primary.main}`,
+        borderLeft: `5px solid ${props.category.hexColor}`,
+        padding: "1% 0 1% 10px",
+      },
     },
-  },
-  checkbox: {
-    marginTop: theme.spacing(-1),
-  },
-  topContainer: {
-    marginTop: theme.spacing(0.5),
-  },
-  paperRow: {
-    "&:hover": {
-      cursor: "pointer",
-      backgroundColor: theme.palette.background.whiteDark,
+    checkbox: {
+      marginTop: theme.spacing(-1),
     },
-  },
-}));
+    topContainer: {
+      marginTop: theme.spacing(0.5),
+    },
+    paperRow: {
+      "&:hover": {
+        cursor: "pointer",
+        backgroundColor: theme.palette.background.whiteDark,
+      },
+    },
+  }));
 
 export default function TaskRow(props) {
-  const classes = useStyles();
+  const classes = useStyles(props)();
 
   const [checked, setChecked] = useState(true);
   const feedbackCtx = useContext(FeedbackContext);
@@ -94,13 +98,20 @@ export default function TaskRow(props) {
             <Typography variant="subtitle1">{props.title}</Typography>
           </Grid>
           <Grid item xs={3} className={classes.topContainer}>
-            <Chip label={props.category.name} color="primary" size="small" />
+            <Chip
+              label={props.category.name}
+              // color="primary"
+              // style={{ backgroundColor: props.category.hexColor }}
+              size="small"
+            />
           </Grid>
           <Grid item xs={2}>
             <Typography variant="subtitle1">{props.dueDate}</Typography>
           </Grid>
           <Grid item xs={1} className={classes.checkbox}>
             <Checkbox
+              icon={<CircleUnchecked />}
+              checkedIcon={<CircleCheckedFilled />}
               value={props.taskId}
               onClick={checkTaskHandler}
               color="primary"

@@ -14,9 +14,6 @@ const useStyles = makeStyles((theme) => ({
     margin: "0 2px",
     transform: "scale(0.8)",
   },
-  pos: {
-    marginBottom: 12,
-  },
   remaining: {
     fontSize: theme.spacing(3),
     fontWeight: 300,

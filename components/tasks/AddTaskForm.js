@@ -29,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
     float: "right",
     marginTop: theme.spacing(-0.5),
   },
+  reminder: {
+    color: "hsl(0, 0%, 45%)",
+  },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -36,6 +39,16 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function AddTaskForm(props) {
+  const [isOpened, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const classes = useStyles();
   const titleInputRef = useRef();
   const dateInputRef = useRef();
@@ -87,9 +100,8 @@ export default function AddTaskForm(props) {
           <TextField
             inputRef={titleInputRef}
             autoFocus
-            required
             variant="outlined"
-            label="Enter task headline"
+            label="Title"
             type="text"
             fullWidth
           />
@@ -98,9 +110,8 @@ export default function AddTaskForm(props) {
           <TextField
             inputRef={dateInputRef}
             id="date"
-            required
             variant="outlined"
-            label="Deadline"
+            label="Due date"
             type="date"
             defaultValue={moment().format("YYYY-MM-DD")}
             fullWidth
@@ -112,7 +123,7 @@ export default function AddTaskForm(props) {
         <Box mb={3}>
           {categoryCtx.categoryState.selectable.length > 0 && <CategoryChips />}
           {categoryCtx.categoryState.selectable.length == 0 && (
-            <Typography variant="subtitle2">
+            <Typography variant="subtitle1" className={classes.reminder}>
               *Please add category before adding task.
             </Typography>
           )}

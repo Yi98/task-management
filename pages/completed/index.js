@@ -4,7 +4,6 @@ import TaskRow from "../../components/tasks/TaskRow";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
-import { getSession } from "next-auth/client";
 import dbConnect from "../../lib/dbConnect";
 import User from "../../models/User";
 import Task from "../../models/Task";

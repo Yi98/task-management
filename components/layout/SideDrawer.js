@@ -74,6 +74,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SideDrawer(props) {
+  const [isOpened, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const classes = useStyles();
   const router = useRouter();
   const categoryCtx = useContext(CategoryContext);
@@ -117,18 +127,6 @@ export default function SideDrawer(props) {
       icon: <CheckCircleOutlineIcon />,
     },
   ];
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [open, setOpen] = React.useState(false);
-
-  function openHandler(event) {
-    setAnchorEl(event.currentTarget);
-    setOpen(true);
-  }
-
-  function closeHandler(event) {
-    setOpen(false);
-  }
 
   function selectCategoryHandler(id) {
     let pathname = router.pathname;
@@ -196,24 +194,20 @@ export default function SideDrawer(props) {
                   primary={category.name}
                   className={`${classes.categoryName}`}
                 />
-                <Avatar className={classes.avatar}>{category.sum || 0}</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: category.hexColor }}>{category.sum || 0}</Avatar>
               </ListItem>
             ))}
           <ListItem
             button
             key="add"
-            onClick={openHandler}
+            onClick={handleClickOpen}
             className={classes.categoryItem}
           >
             <AddIcon className={classes.addIcon} />
 
             <ListItemText primary="New Category" />
           </ListItem>
-          <AddCategoryForm
-            open={open}
-            anchorEl={anchorEl}
-            closeHandler={closeHandler}
-          />
+          <AddCategoryForm isOpened={isOpened} closeHandler={handleClose} />
         </List>
       </div>
     </Drawer>

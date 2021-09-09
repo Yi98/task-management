@@ -15,7 +15,6 @@ import { IconButton } from "@material-ui/core";
 import axios from "axios";
 import FeedbackContext from "../../store/feedback-context";
 import CategoryContext from "../../store/category-context";
-import DeleteIcon from "@material-ui/icons/Delete";
 import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
@@ -89,7 +88,7 @@ export default function TaskDetails(props) {
       disableEnforceFocus
     >
       <DialogTitle id="form-dialog-title" className={classes.formDialogTitle}>
-        Details
+        Task Details
         <IconButton
           aria-label="close"
           onClick={props.closeHandler}
@@ -105,7 +104,7 @@ export default function TaskDetails(props) {
             defaultValue={props.task.title}
             required
             variant="outlined"
-            label="Enter task headline"
+            label="Title"
             type="text"
             fullWidth
           />
@@ -117,7 +116,7 @@ export default function TaskDetails(props) {
             id="date"
             required
             variant="outlined"
-            label="Deadline"
+            label="Due date"
             type="date"
             fullWidth
             InputLabelProps={{
@@ -137,7 +136,6 @@ export default function TaskDetails(props) {
           <Button
             onClick={deleteTaskHandler.bind(null, props.task.taskId)}
             className={classes.deleteButton}
-            endIcon={<DeleteIcon />}
             variant="outlined"
             disableElevation
             color="primary"

@@ -1,4 +1,5 @@
 import { Grid, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import { Fragment } from "react";
 import InfoCard from "../../components/dashboards/InfoCard";
 import User from "../../models/User";
@@ -8,21 +9,39 @@ import dbConnect from "../../lib/dbConnect";
 import moment from "moment";
 import { isAuthenticated } from "../../middlewares/auth";
 
+const useStyles = makeStyles((theme) => ({
+  title: {
+    fontSize: theme.spacing(2.5),
+  },
+}));
+
 export default function Dashboard(props) {
+  const classes = useStyles();
+
   return (
     <Fragment>
       <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Typography variant="h5">Dashboard</Typography>
+        <Grid item xs={9}>
+          <Grid item xs={12}>
+            {/* <Typography variant="h5">Dashboard</Typography> */}
+          </Grid>
         </Grid>
-        <Grid item xs={4}>
-          <InfoCard title="Due today" taskCount={props.dueCount.today} />
-        </Grid>
-        <Grid item xs={4}>
-          <InfoCard title="Due tomorrow" taskCount={props.dueCount.tomorrow} />
-        </Grid>
-        <Grid item xs={4}>
-          <InfoCard title="Due this week" taskCount={props.dueCount.thisWeek} />
+        <Grid item xs={3}>
+          <Grid item xs={12}>
+            <InfoCard title="Due today" taskCount={props.dueCount.today} />
+          </Grid>
+          <Grid item xs={12}>
+            <InfoCard
+              title="Due tomorrow"
+              taskCount={props.dueCount.tomorrow}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InfoCard
+              title="Due this week"
+              taskCount={props.dueCount.thisWeek}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </Fragment>

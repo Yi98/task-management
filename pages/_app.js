@@ -24,9 +24,9 @@ export default function MyApp({ Component, pageProps }) {
         <CssBaseline />
         <FeedbackContextProvider>
           <CategoryContextProvider>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           </CategoryContextProvider>
         </FeedbackContextProvider>
       </ThemeProvider>
